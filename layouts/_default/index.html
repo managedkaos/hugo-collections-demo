@@ -1,0 +1,281 @@
+{{ define "main" }}
+<div class="homepage">
+  {{ .Content }}
+
+  <div class="collections-overview">
+    <h2>Explore My Collections</h2>
+
+    <div class="collections-grid">
+      <div class="collection-card blog">
+        <h3>📝 Blog Posts</h3>
+        <p>Latest articles and tutorials about web development, Hugo, and more.</p>
+        <div class="collection-stats">
+          <span><strong>{{ len (where .Site.RegularPages "Section" "blog") }}</strong> posts</span>
+          <span><strong>{{ len (where (where .Site.RegularPages "Section" "blog") "Params.featured" true) }}</strong>
+            featured</span>
+        </div>
+        <a href="/blog/" class="collection-link">View All Posts →</a>
+      </div>
+
+      <div class="collection-card projects">
+        <h3>🚀 Projects</h3>
+        <p>Portfolio of development projects, tools, and technical work.</p>
+        <div class="collection-stats">
+          <span><strong>{{ len (where .Site.RegularPages "Section" "projects") }}</strong> projects</span>
+          <span><strong>{{ len (where (where .Site.RegularPages "Section" "projects") "Params.status" "completed")
+              }}</strong> completed</span>
+        </div>
+        <a href="/projects/" class="collection-link">View All Projects →</a>
+      </div>
+
+      <div class="collection-card authors">
+        <h3>👥 Authors</h3>
+        <p>Meet the talented people behind our content and projects.</p>
+        <div class="collection-stats">
+          <span><strong>{{ len (where .Site.RegularPages "Section" "authors") }}</strong> authors</span>
+          <span><strong>{{ len (where (where .Site.RegularPages "Section" "authors") "Params.featured" true) }}</strong>
+            featured</span>
+        </div>
+        <a href="/authors/" class="collection-link">View All Authors →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="recent-content">
+    <h2>Recent Content</h2>
+
+    <div class="recent-posts">
+      <h3>Latest Blog Posts</h3>
+      <div class="post-list">
+        {{ range first 3 (where .Site.RegularPages "Section" "blog") }}
+        <div class="post-item">
+          <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+          <p>{{ .Params.description | default .Summary | truncate 120 }}</p>
+          <div class="post-meta">
+            <span>{{ .Date.Format "Jan 2, 2006" }}</span>
+            {{ if .Params.featured }}<span class="featured">⭐ Featured</span>{{ end }}
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+
+    <div class="recent-projects">
+      <h3>Featured Projects</h3>
+      <div class="project-list">
+        {{ range first 3 (where (where .Site.RegularPages "Section" "projects") "Params.featured" true) }}
+        <div class="project-item">
+          <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+          <p>{{ .Params.description | truncate 120 }}</p>
+          <div class="project-meta">
+            <span class="status status-{{ .Params.status }}">{{ .Params.status | title }}</span>
+            <span class="type">{{ .Params.project_type | title }}</span>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .homepage {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .collections-overview {
+    margin: 3rem 0;
+    padding: 2rem 0;
+    border-top: 2px solid #eee;
+    border-bottom: 2px solid #eee;
+  }
+
+  .collections-overview h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+    font-size: 2rem;
+  }
+
+  .collections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .collection-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .collection-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .collection-card.blog {
+    border-color: #28a745;
+  }
+
+  .collection-card.projects {
+    border-color: #007bff;
+  }
+
+  .collection-card.authors {
+    border-color: #6f42c1;
+  }
+
+  .collection-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .collection-card p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .collection-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .collection-stats span {
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .collection-link {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+
+  .collection-link:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+  }
+
+  .recent-content {
+    margin-top: 3rem;
+  }
+
+  .recent-content h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+    font-size: 1.8rem;
+  }
+
+  .recent-posts,
+  .recent-projects {
+    margin-bottom: 3rem;
+  }
+
+  .recent-posts h3,
+  .recent-projects h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  .post-list,
+  .project-list {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .post-item,
+  .project-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .post-item:hover,
+  .project-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .post-item h4,
+  .project-item h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+  }
+
+  .post-item h4 a,
+  .project-item h4 a {
+    color: #333;
+    text-decoration: none;
+  }
+
+  .post-item h4 a:hover,
+  .project-item h4 a:hover {
+    color: #007bff;
+  }
+
+  .post-item p,
+  .project-item p {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .post-meta,
+  .project-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .featured {
+    color: #ffc107;
+    font-weight: bold;
+  }
+
+  .status {
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+
+  .status-completed {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-in-progress {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .type {
+    color: #666;
+  }
+</style>
+{{ end }}

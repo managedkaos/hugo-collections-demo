@@ -1,0 +1,337 @@
+{{ define "main" }}
+<article class="single-page">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{ if .Params.description }}
+    <p class="page-description">{{ .Params.description }}</p>
+    {{ end }}
+  </header>
+
+  <div class="page-content">
+    {{ .Content }}
+  </div>
+
+  {{ if eq .Title "Collections Overview" }}
+  <div class="collections-demo">
+    <h2>Live Collection Data</h2>
+
+    <div class="collection-analytics">
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>📊 Site Statistics</h3>
+          <ul>
+            <li><strong>Total Pages:</strong> {{ len .Site.RegularPages }}</li>
+            <li><strong>Total Sections:</strong> {{ len .Site.Sections }}</li>
+            <li><strong>Site Sections:</strong>
+              {{ range $i, $section := .Site.Sections }}
+              {{ if $i }}, {{ end }}{{ $section.Title | title }}
+              {{ end }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="analytics-card">
+          <h3>📝 Blog Analytics</h3>
+          {{ $blogPages := where .Site.RegularPages "Section" "blog" }}
+          <ul>
+            <li><strong>Total Posts:</strong> {{ len $blogPages }}</li>
+            <li><strong>Featured Posts:</strong> {{ len (where $blogPages "Params.featured" true) }}</li>
+            <li><strong>Draft Posts:</strong> {{ len (where $blogPages "Draft" true) }}</li>
+            <li><strong>Latest Post:</strong>
+              {{ with (index $blogPages 0) }}
+              <a href="{{ .Permalink }}">{{ .Title }}</a> ({{ .Date.Format "Jan 2, 2006" }})
+              {{ end }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="analytics-card">
+          <h3>🚀 Project Analytics</h3>
+          {{ $projectPages := where .Site.RegularPages "Section" "projects" }}
+          <ul>
+            <li><strong>Total Projects:</strong> {{ len $projectPages }}</li>
+            <li><strong>Completed:</strong> {{ len (where $projectPages "Params.status" "completed") }}</li>
+            <li><strong>In Progress:</strong> {{ len (where $projectPages "Params.status" "in-progress") }}</li>
+            <li><strong>Featured Projects:</strong> {{ len (where $projectPages "Params.featured" true) }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tag-cloud">
+      <h3>🏷️ Tag Cloud</h3>
+      {{ $allTags := slice }}
+      {{ range .Site.RegularPages }}
+      {{ if .Params.tags }}
+      {{ $allTags = $allTags | append .Params.tags }}
+      {{ end }}
+      {{ end }}
+      {{ $uniqueTags := $allTags | uniq }}
+      <div class="tags">
+        {{ range $uniqueTags }}
+        <span class="tag">{{ . }}</span>
+        {{ end }}
+      </div>
+    </div>
+
+    <div class="recent-activity">
+      <h3>📅 Recent Activity</h3>
+      {{ $recentPages := .Site.RegularPages | first 5 }}
+      <div class="activity-list">
+        {{ range $recentPages }}
+        <div class="activity-item">
+          <span class="activity-date">{{ .Date.Format "Jan 2" }}</span>
+          <span class="activity-section">{{ .Section | title }}</span>
+          <a href="{{ .Permalink }}" class="activity-title">{{ .Title }}</a>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+
+    <div class="collection-examples">
+      <h3>🔧 Template Function Examples</h3>
+      <div class="code-examples">
+        <div class="code-block">
+          <h4>Filter by Front Matter</h4>
+          <pre><code>{{ `{{ range where .Site.RegularPages "Params.featured" true }}` }}</code></pre>
+          <p>This finds all pages where the "featured" parameter is true.</p>
+        </div>
+
+        <div class="code-block">
+          <h4>Sort by Date</h4>
+          <pre><code>{{ `{{ range .Site.RegularPages.ByDate.Reverse }}` }}</code></pre>
+          <p>This sorts pages by date, newest first.</p>
+        </div>
+
+        <div class="code-block">
+          <h4>Group by Section</h4>
+          <pre><code>{{ `{{ range .Site.Sections }}` }}</code></pre>
+          <p>This loops through all sections (collections).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ end }}
+</article>
+
+<style>
+  .single-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #eee;
+  }
+
+  .page-header h1 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+  }
+
+  .page-description {
+    color: #666;
+    font-size: 1.2rem;
+    font-style: italic;
+  }
+
+  .page-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+  }
+
+  .collections-demo {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-top: 3rem;
+  }
+
+  .collections-demo h2 {
+    color: #333;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .analytics-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .analytics-card h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+  }
+
+  .analytics-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .analytics-card li {
+    margin-bottom: 0.8rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 5px;
+  }
+
+  .analytics-card a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .analytics-card a:hover {
+    text-decoration: underline;
+  }
+
+  .tag-cloud {
+    margin-bottom: 3rem;
+  }
+
+  .tag-cloud h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+
+  .recent-activity {
+    margin-bottom: 3rem;
+  }
+
+  .recent-activity h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+
+  .activity-list {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    transition: background 0.3s;
+  }
+
+  .activity-item:hover {
+    background: #f8f9fa;
+  }
+
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+
+  .activity-date {
+    background: #007bff;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 1rem;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .activity-section {
+    background: #28a745;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 1rem;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .activity-title {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .activity-title:hover {
+    color: #007bff;
+  }
+
+  .collection-examples h3 {
+    color: #333;
+    margin-bottom: 2rem;
+  }
+
+  .code-examples {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .code-block {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+
+  .code-block h4 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .code-block pre {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  .code-block code {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+    color: #d63384;
+  }
+
+  .code-block p {
+    color: #666;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+</style>
+{{ end }}

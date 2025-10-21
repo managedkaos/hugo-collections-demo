@@ -1,0 +1,618 @@
+{{ define "main" }}
+<article class="author-single">
+    <header class="author-header">
+        {{ if .Params.featured }}
+        <div class="featured-badge">⭐ Featured Author</div>
+        {{ end }}
+
+        <div class="author-profile">
+            <div class="author-avatar-large">
+                {{ if .Params.avatar }}
+                <img src="{{ .Params.avatar }}" alt="{{ .Title }}" />
+                {{ else }}
+                <div class="avatar-placeholder-large">
+                    <span>{{ .Title | truncate 2 }}</span>
+                </div>
+                {{ end }}
+            </div>
+
+            <div class="author-details">
+                <h1>{{ .Title }}</h1>
+                <p class="author-role">{{ .Params.role }}</p>
+                <p class="author-company">{{ .Params.company }}</p>
+                <p class="author-location">{{ .Params.location }}</p>
+
+                <div class="author-bio-short">
+                    <p>{{ .Params.bio }}</p>
+                </div>
+
+                <div class="author-stats">
+                    <div class="stat">
+                        <strong>{{ .Params.years_experience }}+</strong>
+                        <span>Years Experience</span>
+                    </div>
+                    <div class="stat">
+                        <strong>{{ .Params.expertise_level }}</strong>
+                        <span>Level</span>
+                    </div>
+                    <div class="stat">
+                        <strong>{{ len .Params.specialties }}</strong>
+                        <span>Specialties</span>
+                    </div>
+                </div>
+
+                <div class="author-links">
+                    {{ if .Params.website }}
+                    <a href="{{ .Params.website }}" target="_blank" class="author-link website">
+                        <span>🌐</span> Website
+                    </a>
+                    {{ end }}
+                    {{ if .Params.github }}
+                    <a href="https://github.com/{{ .Params.github }}" target="_blank" class="author-link github">
+                        <span>💻</span> GitHub
+                    </a>
+                    {{ end }}
+                    {{ if .Params.twitter }}
+                    <a href="https://twitter.com/{{ .Params.twitter }}" target="_blank" class="author-link twitter">
+                        <span>🐦</span> Twitter
+                    </a>
+                    {{ end }}
+                    {{ if .Params.linkedin }}
+                    <a href="https://linkedin.com/in/{{ .Params.linkedin }}" target="_blank"
+                        class="author-link linkedin">
+                        <span>💼</span> LinkedIn
+                    </a>
+                    {{ end }}
+                    {{ if .Params.email }}
+                    <a href="mailto:{{ .Params.email }}" class="author-link email">
+                        <span>📧</span> Email
+                    </a>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="author-content">
+        <div class="author-full-bio">
+            <h2>About {{ .Title }}</h2>
+            {{ .Content }}
+        </div>
+
+        <div class="author-specialties">
+            <h2>Specialties & Expertise</h2>
+            <div class="specialties-grid">
+                {{ range .Params.specialties }}
+                <span class="specialty-tag">{{ . }}</span>
+                {{ end }}
+            </div>
+        </div>
+
+        <div class="author-content-stats">
+            <h2>Content by {{ .Title }}</h2>
+
+            {{ $authorSlug := .Params.slug }}
+            {{ $allPages := .Site.RegularPages }}
+            {{ $authorBlogPosts := slice }}
+            {{ $authorProjects := slice }}
+
+            {{ range $allPages }}
+            {{ if and (eq .Section "blog") .Params.authors }}
+            {{ if in .Params.authors $authorSlug }}
+            {{ $authorBlogPosts = $authorBlogPosts | append . }}
+            {{ end }}
+            {{ end }}
+            {{ if and (eq .Section "projects") .Params.authors }}
+            {{ if in .Params.authors $authorSlug }}
+            {{ $authorProjects = $authorProjects | append . }}
+            {{ end }}
+            {{ end }}
+            {{ end }}
+
+            <div class="content-stats">
+                <div class="content-stat">
+                    <h3>{{ len $authorBlogPosts }}</h3>
+                    <p>Blog Posts</p>
+                </div>
+                <div class="content-stat">
+                    <h3>{{ len $authorProjects }}</h3>
+                    <p>Projects</p>
+                </div>
+                <div class="content-stat">
+                    <h3>{{ add (len $authorBlogPosts) (len $authorProjects) }}</h3>
+                    <p>Total Content</p>
+                </div>
+            </div>
+
+            {{ if $authorBlogPosts }}
+            <div class="author-blog-posts">
+                <h3>Recent Blog Posts</h3>
+                <div class="posts-list">
+                    {{ range first 3 $authorBlogPosts }}
+                    <div class="post-item">
+                        <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+                        <p>{{ .Params.description | default .Summary | truncate 100 }}</p>
+                        <div class="post-meta">
+                            <span>{{ .Date.Format "Jan 2, 2006" }}</span>
+                            {{ if .Params.featured }}<span class="featured">⭐ Featured</span>{{ end }}
+                        </div>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
+
+            {{ if $authorProjects }}
+            <div class="author-projects">
+                <h3>Projects</h3>
+                <div class="projects-list">
+                    {{ range first 3 $authorProjects }}
+                    <div class="project-item">
+                        <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+                        <p>{{ .Params.description | truncate 100 }}</p>
+                        <div class="project-meta">
+                            <span class="status status-{{ .Params.status }}">{{ .Params.status | title }}</span>
+                            <span class="type">{{ .Params.project_type | title }}</span>
+                        </div>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+
+    <footer class="author-footer">
+        <div class="author-navigation">
+            {{ with .PrevInSection }}
+            <a href="{{ .Permalink }}" class="nav-link prev">
+                <span>←</span> {{ .Title }}
+            </a>
+            {{ end }}
+            {{ with .NextInSection }}
+            <a href="{{ .Permalink }}" class="nav-link next">
+                {{ .Title }} <span>→</span>
+            </a>
+            {{ end }}
+        </div>
+
+        <div class="related-authors">
+            <h3>Other Authors</h3>
+            {{ $related := .Site.RegularPages.Related . | first 3 }}
+            {{ with $related }}
+            <div class="related-grid">
+                {{ range . }}
+                <div class="related-item">
+                    <a href="{{ .Permalink }}">
+                        <h4>{{ .Title }}</h4>
+                        <p>{{ .Params.role }}</p>
+                        <span class="related-specialty">{{ .Params.specialties | first 1 }}</span>
+                    </a>
+                </div>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </footer>
+</article>
+
+<style>
+    .author-single {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .author-header {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #eee;
+        position: relative;
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ffc107;
+        color: #333;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .author-profile {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .author-avatar-large {
+        text-align: center;
+    }
+
+    .author-avatar-large img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #007bff;
+    }
+
+    .avatar-placeholder-large {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        font-weight: bold;
+        margin: 0 auto;
+    }
+
+    .author-details h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+    }
+
+    .author-role {
+        color: #007bff;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .author-company,
+    .author-location {
+        color: #666;
+        font-size: 1rem;
+        margin: 0 0 0.3rem 0;
+    }
+
+    .author-bio-short {
+        margin: 1.5rem 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .author-stats {
+        display: flex;
+        gap: 2rem;
+        margin: 1.5rem 0;
+    }
+
+    .stat {
+        text-align: center;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 1.5rem;
+        color: #007bff;
+        margin-bottom: 0.3rem;
+    }
+
+    .stat span {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .author-links {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+    }
+
+    .author-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.2rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .author-link.website {
+        background: #007bff;
+        color: white;
+    }
+
+    .author-link.github {
+        background: #333;
+        color: white;
+    }
+
+    .author-link.twitter {
+        background: #1da1f2;
+        color: white;
+    }
+
+    .author-link.linkedin {
+        background: #0077b5;
+        color: white;
+    }
+
+    .author-link.email {
+        background: #28a745;
+        color: white;
+    }
+
+    .author-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .author-content {
+        margin-bottom: 3rem;
+    }
+
+    .author-content h2 {
+        color: #333;
+        margin-top: 2.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .author-full-bio {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+        margin-bottom: 2rem;
+    }
+
+    .author-full-bio h2 {
+        margin-top: 0;
+    }
+
+    .specialties-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    .specialty-tag {
+        background: #007bff;
+        color: white;
+        padding: 0.8rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .content-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .content-stat {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .content-stat h3 {
+        font-size: 2rem;
+        margin: 0 0 0.5rem 0;
+        color: #007bff;
+    }
+
+    .content-stat p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .author-blog-posts,
+    .author-projects {
+        margin: 2rem 0;
+    }
+
+    .author-blog-posts h3,
+    .author-projects h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+    }
+
+    .posts-list,
+    .projects-list {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .post-item,
+    .project-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: all 0.3s;
+    }
+
+    .post-item:hover,
+    .project-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-item h4,
+    .project-item h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+    }
+
+    .post-item h4 a,
+    .project-item h4 a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .post-item h4 a:hover,
+    .project-item h4 a:hover {
+        color: #007bff;
+    }
+
+    .post-item p,
+    .project-item p {
+        color: #666;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .post-meta,
+    .project-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .featured {
+        color: #ffc107;
+        font-weight: bold;
+    }
+
+    .status {
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-in-progress {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .type {
+        color: #666;
+    }
+
+    .author-footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid #eee;
+    }
+
+    .author-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        gap: 1rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+        transition: all 0.3s;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .nav-link:hover {
+        background: #007bff;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .related-authors h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .related-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .related-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .related-item a {
+        display: block;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .related-item h4 {
+        margin: 0 0 0.5rem 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .related-item p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .related-specialty {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .author-profile {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .author-stats {
+            justify-content: center;
+        }
+
+        .author-navigation {
+            flex-direction: column;
+        }
+    }
+</style>
+{{ end }}

@@ -1,0 +1,349 @@
+{{ define "main" }}
+<div class="blog-header">
+    <h1>{{ .Title | default "Blog Posts" }}</h1>
+    <p>Welcome to our blog! Here are all our posts:</p>
+</div>
+
+<div class="blog-stats">
+    <p><strong>Total Posts:</strong> {{ len .Pages }}</p>
+    <p><strong>Featured Posts:</strong> {{ len (where .Pages "Params.featured" true) }}</p>
+</div>
+
+<!-- Advanced Filtering and Sorting -->
+<div class="blog-controls">
+    <div class="filter-section">
+        <h3>Filter Posts</h3>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Posts</button>
+            <button class="filter-btn" data-filter="featured">Featured Only</button>
+            <button class="filter-btn" data-filter="tutorials">Tutorials</button>
+            <button class="filter-btn" data-filter="reviews">Reviews</button>
+        </div>
+    </div>
+
+    <div class="sort-section">
+        <h3>Sort By</h3>
+        <select id="sortSelect" class="sort-select">
+            <option value="date-desc">Date (Newest First)</option>
+            <option value="date-asc">Date (Oldest First)</option>
+            <option value="title-asc">Title (A-Z)</option>
+            <option value="title-desc">Title (Z-A)</option>
+        </select>
+    </div>
+</div>
+
+<div class="blog-posts" id="blogPosts">
+    {{ range .Pages }}
+    <article class="blog-post" data-featured="{{ .Params.featured }}" data-category="{{ .Params.categories | first 1 }}"
+        data-date="{{ .Date.Format " 2006-01-02" }}" data-title="{{ .Title | lower }}">
+        <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+        <div class="post-meta">
+            <span class="date">{{ .Date.Format "January 2, 2006" }}</span>
+            {{ if .Params.authors }}
+            <span class="authors">
+                by
+                {{ range $i, $authorSlug := .Params.authors }}
+                {{ $author := $.Site.GetPage (printf "/authors/%s" $authorSlug) }}
+                {{ if $author }}
+                {{ if $i }}, {{ end }}<a href="{{ $author.Permalink }}">{{ $author.Title }}</a>
+                {{ end }}
+                {{ end }}
+            </span>
+            {{ else }}
+            <span class="author">by Anonymous</span>
+            {{ end }}
+            {{ if .Params.tags }}
+            <span class="tags">
+                {{ range .Params.tags }}
+                <span class="tag">{{ . }}</span>
+                {{ end }}
+            </span>
+            {{ end }}
+        </div>
+        <div class="post-excerpt">
+            {{ .Summary }}
+        </div>
+        {{ if .Params.featured }}
+        <span class="featured-badge">⭐ Featured</span>
+        {{ end }}
+    </article>
+    {{ end }}
+</div>
+
+<!-- Pagination -->
+{{ if gt .Paginator.TotalPages 1 }}
+<div class="pagination">
+    {{ if .Paginator.HasPrev }}
+    <a href="{{ .Paginator.Prev.URL }}" class="pagination-btn prev">← Previous</a>
+    {{ end }}
+
+    <span class="pagination-info">
+        Page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}
+    </span>
+
+    {{ if .Paginator.HasNext }}
+    <a href="{{ .Paginator.Next.URL }}" class="pagination-btn next">Next →</a>
+    {{ end }}
+</div>
+{{ end }}
+
+<style>
+    .blog-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #eee;
+    }
+
+    .blog-stats {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+    }
+
+    .blog-controls {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .filter-section h3,
+    .sort-section h3 {
+        margin: 0 0 1rem 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .sort-select {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+        font-size: 0.9rem;
+        width: 100%;
+    }
+
+    .blog-posts {
+        display: grid;
+        gap: 2rem;
+    }
+
+    .blog-post {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+        transition: all 0.3s;
+    }
+
+    .blog-post:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .blog-post h2 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .blog-post h2 a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .blog-post h2 a:hover {
+        color: #007bff;
+    }
+
+    .post-meta {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+    }
+
+    .post-meta span {
+        margin-right: 1rem;
+    }
+
+    .authors a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .authors a:hover {
+        text-decoration: underline;
+    }
+
+    .tags {
+        display: inline-block;
+    }
+
+    .tag {
+        background: #e9ecef;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        margin-right: 0.3rem;
+    }
+
+    .post-excerpt {
+        margin: 1rem 0;
+        line-height: 1.6;
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #ffc107;
+        color: #333;
+        padding: 0.3rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 3rem;
+        padding: 2rem 0;
+        border-top: 1px solid #eee;
+    }
+
+    .pagination-btn {
+        padding: 0.8rem 1.5rem;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .pagination-btn:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .pagination-info {
+        color: #666;
+        font-weight: bold;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .blog-controls {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .filter-buttons {
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const sortSelect = document.getElementById('sortSelect');
+        const blogPosts = document.getElementById('blogPosts');
+        const posts = Array.from(document.querySelectorAll('.blog-post'));
+
+        // Filter functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+
+                const filter = this.getAttribute('data-filter');
+
+                posts.forEach(post => {
+                    if (filter === 'all') {
+                        post.style.display = 'block';
+                    } else if (filter === 'featured') {
+                        if (post.getAttribute('data-featured') === 'true') {
+                            post.style.display = 'block';
+                        } else {
+                            post.style.display = 'none';
+                        }
+                    } else if (filter === 'tutorials') {
+                        if (post.getAttribute('data-category') === 'tutorials') {
+                            post.style.display = 'block';
+                        } else {
+                            post.style.display = 'none';
+                        }
+                    } else if (filter === 'reviews') {
+                        if (post.getAttribute('data-category') === 'reviews') {
+                            post.style.display = 'block';
+                        } else {
+                            post.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+
+        // Sort functionality
+        sortSelect.addEventListener('change', function () {
+            const sortBy = this.value;
+            const visiblePosts = posts.filter(post => post.style.display !== 'none');
+
+            visiblePosts.sort((a, b) => {
+                switch (sortBy) {
+                    case 'date-desc':
+                        return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+                    case 'date-asc':
+                        return new Date(a.getAttribute('data-date')) - new Date(b.getAttribute('data-date'));
+                    case 'title-asc':
+                        return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+                    case 'title-desc':
+                        return b.getAttribute('data-title').localeCompare(a.getAttribute('data-title'));
+                    default:
+                        return 0;
+                }
+            });
+
+            // Reorder posts in DOM
+            visiblePosts.forEach(post => {
+                blogPosts.appendChild(post);
+            });
+        });
+    });
+</script>
+{{ end }}

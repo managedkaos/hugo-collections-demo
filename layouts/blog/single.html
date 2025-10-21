@@ -1,0 +1,185 @@
+{{ define "main" }}
+<article class="blog-post-single">
+    <header class="post-header">
+        <h1>{{ .Title }}</h1>
+        <div class="post-meta">
+            <span class="date">{{ .Date.Format "January 2, 2006" }}</span>
+            {{ if .Params.authors }}
+            <div class="authors">
+                <span>by</span>
+                {{ range $i, $authorSlug := .Params.authors }}
+                {{ $author := $.Site.GetPage (printf "/authors/%s" $authorSlug) }}
+                {{ if $author }}
+                {{ if $i }}, {{ end }}<a href="{{ $author.Permalink }}" class="author-link">{{ $author.Title }}</a>
+                {{ end }}
+                {{ end }}
+            </div>
+            {{ else }}
+            <span class="author">by Anonymous</span>
+            {{ end }}
+            {{ if .Params.tags }}
+            <div class="tags">
+                {{ range .Params.tags }}
+                <span class="tag">{{ . }}</span>
+                {{ end }}
+            </div>
+            {{ end }}
+            {{ if .Params.featured }}
+            <span class="featured-badge">⭐ Featured Post</span>
+            {{ end }}
+        </div>
+    </header>
+
+    <div class="post-content">
+        {{ .Content }}
+    </div>
+
+    <footer class="post-footer">
+        <div class="post-navigation">
+            {{ with .PrevInSection }}
+            <a href="{{ .Permalink }}" class="nav-link prev">← {{ .Title }}</a>
+            {{ end }}
+            {{ with .NextInSection }}
+            <a href="{{ .Permalink }}" class="nav-link next">{{ .Title }} →</a>
+            {{ end }}
+        </div>
+
+        <div class="related-posts">
+            <h3>Related Posts</h3>
+            {{ $related := .Site.RegularPages.Related . | first 3 }}
+            {{ with $related }}
+            <ul>
+                {{ range . }}
+                <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+                {{ end }}
+            </ul>
+            {{ end }}
+        </div>
+    </footer>
+</article>
+
+<style>
+    .blog-post-single {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .post-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #eee;
+    }
+
+    .post-header h1 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .post-meta {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .post-meta span {
+        margin-right: 1rem;
+    }
+
+    .tags {
+        margin-top: 0.5rem;
+    }
+
+    .tag {
+        background: #e9ecef;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        margin-right: 0.3rem;
+    }
+
+    .featured-badge {
+        background: #ffc107;
+        color: #333;
+        padding: 0.3rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+
+    .post-content {
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+    .post-content h1,
+    .post-content h2,
+    .post-content h3 {
+        color: #333;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .post-content h1 {
+        font-size: 2rem;
+    }
+
+    .post-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .post-content h3 {
+        font-size: 1.3rem;
+    }
+
+    .post-footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+    }
+
+    .post-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .nav-link {
+        text-decoration: none;
+        color: #007bff;
+        padding: 0.5rem 1rem;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+        background: #007bff;
+        color: white;
+    }
+
+    .related-posts h3 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .related-posts ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .related-posts li {
+        margin-bottom: 0.5rem;
+    }
+
+    .related-posts a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .related-posts a:hover {
+        text-decoration: underline;
+    }
+</style>
+{{ end }}

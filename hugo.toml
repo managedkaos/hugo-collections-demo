@@ -1,0 +1,9 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+title = 'My New Hugo Site'
+disableKinds = ['taxonomy', 'term']
+
+# Pagination settings (Hugo v0.128.0+ format)
+[pagination]
+  pagerSize = 5
+  path = "page"

@@ -1,0 +1,496 @@
+{{ define "main" }}
+<div class="projects-header">
+    <h1>{{ .Title | default "Projects Portfolio" }}</h1>
+    <p>Explore my collection of development projects and technical work.</p>
+</div>
+
+<div class="projects-stats">
+    <div class="stat-card">
+        <h3>{{ len .Pages }}</h3>
+        <p>Total Projects</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ len (where .Pages "Params.status" "completed") }}</h3>
+        <p>Completed</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ len (where .Pages "Params.featured" true) }}</h3>
+        <p>Featured</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ len (where .Pages "Params.status" "in-progress") }}</h3>
+        <p>In Progress</p>
+    </div>
+</div>
+
+<div class="projects-filters">
+    <div class="search-section">
+        <h3>Search Projects</h3>
+        <input type="text" id="projectSearch" placeholder="Search by title, description, or technology..."
+            class="search-input">
+    </div>
+
+    <div class="filter-section">
+        <h3>Filter by Status:</h3>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+            <button class="filter-btn" data-filter="in-progress">In Progress</button>
+            <button class="filter-btn" data-filter="featured">Featured</button>
+        </div>
+    </div>
+
+    <div class="sort-section">
+        <h3>Sort By:</h3>
+        <select id="projectSort" class="sort-select">
+            <option value="date-desc">Date (Newest First)</option>
+            <option value="date-asc">Date (Oldest First)</option>
+            <option value="title-asc">Title (A-Z)</option>
+            <option value="title-desc">Title (Z-A)</option>
+            <option value="status">Status</option>
+        </select>
+    </div>
+</div>
+
+<div class="projects-grid">
+    {{ range .Pages }}
+    <div class="project-card" data-status="{{ .Params.status }}" data-featured="{{ .Params.featured }}"
+        data-title="{{ .Title | lower }}" data-description="{{ .Params.description | lower }}"
+        data-technologies="{{ delimit .Params.technologies " " | lower }}" data-date="{{ .Date.Format " 2006-01-02" }}"
+        data-type="{{ .Params.project_type | lower }}">
+        {{ if .Params.featured }}
+        <div class="featured-badge">⭐ Featured</div>
+        {{ end }}
+
+        <div class="project-image">
+            {{ if .Params.image }}
+            <img src="{{ .Params.image }}" alt="{{ .Title }}" />
+            {{ else }}
+            <div class="placeholder-image">
+                <span>{{ .Title | truncate 2 }}</span>
+            </div>
+            {{ end }}
+        </div>
+
+        <div class="project-content">
+            <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+
+            <div class="project-meta">
+                <span class="project-type">{{ .Params.project_type | title }}</span>
+                <span class="project-status status-{{ .Params.status }}">{{ .Params.status | title }}</span>
+            </div>
+
+            {{ if .Params.authors }}
+            <div class="project-authors">
+                <span class="authors-label">Authors:</span>
+                {{ range $i, $authorSlug := .Params.authors }}
+                {{ $author := $.Site.GetPage (printf "/authors/%s" $authorSlug) }}
+                {{ if $author }}
+                {{ if $i }}, {{ end }}<a href="{{ $author.Permalink }}" class="author-link">{{ $author.Title }}</a>
+                {{ end }}
+                {{ end }}
+            </div>
+            {{ end }}
+
+            <p class="project-description">{{ .Params.description }}</p>
+
+            <div class="project-technologies">
+                {{ range .Params.technologies }}
+                <span class="tech-tag">{{ . }}</span>
+                {{ end }}
+            </div>
+
+            <div class="project-links">
+                {{ if .Params.github_url }}
+                <a href="{{ .Params.github_url }}" class="project-link github" target="_blank">
+                    GitHub
+                </a>
+                {{ end }}
+                {{ if .Params.demo_url }}
+                <a href="{{ .Params.demo_url }}" class="project-link demo" target="_blank">
+                    Live Demo
+                </a>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</div>
+
+<style>
+    .projects-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #eee;
+    }
+
+    .projects-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid #e9ecef;
+    }
+
+    .stat-card h3 {
+        font-size: 2rem;
+        margin: 0;
+        color: #007bff;
+    }
+
+    .stat-card p {
+        margin: 0.5rem 0 0 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .projects-filters {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .search-section h3,
+    .filter-section h3,
+    .sort-section h3 {
+        margin: 0 0 1rem 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .sort-select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+    }
+
+    @media (max-width: 768px) {
+        .projects-filters {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .project-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #ffc107;
+        color: #333;
+        padding: 0.3rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        z-index: 1;
+    }
+
+    .project-image {
+        height: 200px;
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .placeholder-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .project-content {
+        padding: 1.5rem;
+    }
+
+    .project-content h2 {
+        margin: 0 0 1rem 0;
+        font-size: 1.3rem;
+    }
+
+    .project-content h2 a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .project-content h2 a:hover {
+        color: #007bff;
+    }
+
+    .project-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .project-type {
+        color: #666;
+    }
+
+    .project-status {
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-in-progress {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .project-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .project-technologies {
+        margin-bottom: 1rem;
+    }
+
+    .tech-tag {
+        display: inline-block;
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        margin-right: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .project-links {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .project-link {
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .project-link.github {
+        background: #333;
+        color: white;
+    }
+
+    .project-link.github:hover {
+        background: #555;
+    }
+
+    .project-link.demo {
+        background: #007bff;
+        color: white;
+    }
+
+    .project-link.demo:hover {
+        background: #0056b3;
+    }
+
+    .project-authors {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+
+    .authors-label {
+        color: #666;
+        font-weight: bold;
+    }
+
+    .author-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .author-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const projectCards = Array.from(document.querySelectorAll('.project-card'));
+        const searchInput = document.getElementById('projectSearch');
+        const sortSelect = document.getElementById('projectSort');
+        const projectsGrid = document.querySelector('.projects-grid');
+
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        // Filter functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.getAttribute('data-filter');
+                applyFilters();
+            });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', function () {
+            currentSearch = this.value.toLowerCase();
+            applyFilters();
+        });
+
+        // Sort functionality
+        sortSelect.addEventListener('change', function () {
+            applySorting();
+        });
+
+        function applyFilters() {
+            projectCards.forEach(card => {
+                const matchesFilter = matchesCurrentFilter(card);
+                const matchesSearch = matchesCurrentSearch(card);
+
+                if (matchesFilter && matchesSearch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            applySorting();
+        }
+
+        function matchesCurrentFilter(card) {
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'featured') return card.getAttribute('data-featured') === 'true';
+            return card.getAttribute('data-status') === currentFilter;
+        }
+
+        function matchesCurrentSearch(card) {
+            if (!currentSearch) return true;
+
+            const title = card.getAttribute('data-title');
+            const description = card.getAttribute('data-description');
+            const technologies = card.getAttribute('data-technologies');
+
+            return title.includes(currentSearch) ||
+                description.includes(currentSearch) ||
+                technologies.includes(currentSearch);
+        }
+
+        function applySorting() {
+            const visibleCards = projectCards.filter(card => card.style.display !== 'none');
+            const sortBy = sortSelect.value;
+
+            visibleCards.sort((a, b) => {
+                switch (sortBy) {
+                    case 'date-desc':
+                        return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+                    case 'date-asc':
+                        return new Date(a.getAttribute('data-date')) - new Date(b.getAttribute('data-date'));
+                    case 'title-asc':
+                        return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+                    case 'title-desc':
+                        return b.getAttribute('data-title').localeCompare(a.getAttribute('data-title'));
+                    case 'status':
+                        return a.getAttribute('data-status').localeCompare(b.getAttribute('data-status'));
+                    default:
+                        return 0;
+                }
+            });
+
+            // Reorder cards in DOM
+            visibleCards.forEach(card => {
+                projectsGrid.appendChild(card);
+            });
+        }
+    });
+</script>
+{{ end }}
