@@ -12,15 +12,13 @@ github: "sarahwilson"
 twitter: "@sarahwilson"
 linkedin: "sarah-wilson-pm"
 email: "sarah@example.com"
-avatar: "/images/authors/sarah-wilson.jpg"
+avatar: "https://placehold.co/600x400/000000/FFF?text=SW"
 specialties: ["Product Management", "Strategy", "Developer Tools", "API Design", "Team Leadership"]
 expertise_level: "Senior"
 years_experience: 7
 featured: true
 description: "Building products that developers love while balancing business needs and technical constraints."
 ---
-
-# Sarah Wilson
 
 Sarah is a Senior Product Manager with 7 years of experience in developer tools and platform products. She has a unique background combining technical expertise with business strategy.
 

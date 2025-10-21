@@ -12,15 +12,13 @@ github: "johndoe"
 twitter: "@johndoe"
 linkedin: "john-doe-dev"
 email: "john@example.com"
-avatar: "/images/authors/john-doe.jpg"
+avatar: "https://placehold.co/600x400/000000/FFF?text=JD"
 specialties: ["JavaScript", "React", "Node.js", "Hugo", "Web Development"]
 expertise_level: "Expert"
 years_experience: 8
 featured: true
 description: "Passionate about creating fast, accessible web experiences and sharing knowledge through technical writing."
 ---
-
-# John Doe
 
 John is a Senior Full-Stack Developer with over 8 years of experience building scalable web applications. He specializes in modern JavaScript frameworks, static site generation, and developer tooling.
 

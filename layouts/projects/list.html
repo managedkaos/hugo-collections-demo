@@ -69,13 +69,15 @@
         {{ end }}
 
         <div class="project-image">
-            {{ if .Params.image }}
-            <img src="{{ .Params.image }}" alt="{{ .Title }}" />
-            {{ else }}
-            <div class="placeholder-image">
-                <span>{{ .Title | truncate 2 }}</span>
-            </div>
-            {{ end }}
+            <a href="{{ .Permalink }}" class="project-image-link">
+                {{ if .Params.image }}
+                <img src="{{ .Params.image }}" alt="{{ .Title }}" />
+                {{ else }}
+                <div class="placeholder-image">
+                    <span>{{ .Title | truncate 2 }}</span>
+                </div>
+                {{ end }}
+            </a>
         </div>
 
         <div class="project-content">
@@ -298,10 +300,27 @@
         background: #f8f9fa;
     }
 
+    .project-image-link {
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        transition: transform 0.3s;
+    }
+
+    .project-image-link:hover {
+        transform: scale(1.05);
+    }
+
     .project-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .project-image-link:hover img {
+        transform: scale(1.1);
     }
 
     .placeholder-image {

@@ -58,13 +58,15 @@
         {{ end }}
 
         <div class="author-avatar">
-            {{ if .Params.avatar }}
-            <img src="{{ .Params.avatar }}" alt="{{ .Title }}" />
-            {{ else }}
-            <div class="avatar-placeholder">
-                <span>{{ .Title | truncate 2 }}</span>
-            </div>
-            {{ end }}
+            <a href="{{ .Permalink }}" class="author-avatar-link">
+                {{ if .Params.avatar }}
+                <img src="{{ .Params.avatar }}" alt="{{ .Title }}" />
+                {{ else }}
+                <div class="avatar-placeholder">
+                    <span>{{ .Title | truncate 2 }}</span>
+                </div>
+                {{ end }}
+            </a>
         </div>
 
         <div class="author-info">
@@ -276,12 +278,32 @@
         position: relative;
     }
 
+    .author-avatar-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        transition: transform 0.3s;
+    }
+
+    .author-avatar-link:hover {
+        transform: scale(1.1);
+    }
+
     .author-avatar img {
         width: 80px;
         height: 80px;
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid white;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .author-avatar-link:hover img {
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .avatar-placeholder {
@@ -295,6 +317,12 @@
         color: white;
         font-size: 1.5rem;
         font-weight: bold;
+        transition: transform 0.3s, background 0.3s;
+    }
+
+    .author-avatar-link:hover .avatar-placeholder {
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.3);
     }
 
     .author-info {

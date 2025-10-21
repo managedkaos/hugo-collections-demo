@@ -12,15 +12,13 @@ github: "janesmith"
 twitter: "@janesmith"
 linkedin: "jane-smith-ux"
 email: "jane@example.com"
-avatar: "/images/authors/jane-smith.jpg"
+avatar: "https://placehold.co/600x400/000000/FFF?text=JS"
 specialties: ["UX Design", "CSS", "Accessibility", "User Research", "Design Systems"]
 expertise_level: "Expert"
 years_experience: 6
 featured: true
 description: "Bridging the gap between design and development to create beautiful, functional user experiences."
 ---
-
-# Jane Smith
 
 Jane is a UX Designer and Frontend Developer who believes great design and great code go hand in hand. With 6 years of experience, she specializes in creating accessible, user-centered digital experiences.
 

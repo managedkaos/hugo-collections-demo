@@ -9,11 +9,9 @@ github_url: "https://github.com/example/portfolio"
 demo_url: "https://portfolio.example.com"
 featured: false
 description: "A modern portfolio website built with Next.js and TypeScript"
-image: "/images/portfolio-preview.jpg"
+image: "https://placehold.co/600x400/000000/FFF?text=Portfolio\nWebsite"
 authors: ["jane-smith"]
 ---
-
-# Portfolio Website
 
 A modern, responsive portfolio website showcasing my development skills and projects.
 

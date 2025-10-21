@@ -9,11 +9,9 @@ github_url: "https://github.com/example/api-docs"
 demo_url: "https://api-docs.example.com"
 featured: true
 description: "Automated API documentation generator with interactive examples"
-image: "/images/api-docs-preview.jpg"
+image: "https://placehold.co/600x400/000000/FFF?text=API Documentation\nGenerator"
 authors: ["mike-johnson", "sarah-wilson", "john-doe"]
 ---
-
-# API Documentation Generator
 
 An automated tool for generating comprehensive API documentation from OpenAPI specifications.
 

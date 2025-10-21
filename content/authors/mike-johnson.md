@@ -12,15 +12,13 @@ github: "mikejohnson"
 twitter: "@mikejohnson"
 linkedin: "mike-johnson-devops"
 email: "mike@example.com"
-avatar: "/images/authors/mike-johnson.jpg"
+avatar: "https://placehold.co/600x400/000000/FFF?text=MJ"
 specialties: ["DevOps", "AWS", "Docker", "Kubernetes", "CI/CD", "Infrastructure"]
 expertise_level: "Senior"
 years_experience: 5
 featured: false
 description: "Simplifying complex infrastructure concepts and helping teams scale their deployment processes."
 ---
-
-# Mike Johnson
 
 Mike is a DevOps Engineer with 5 years of experience in cloud infrastructure and automation. He specializes in helping development teams scale their deployment processes and infrastructure management.
 

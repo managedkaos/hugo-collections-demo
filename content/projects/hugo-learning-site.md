@@ -9,11 +9,9 @@ github_url: "https://github.com/example/hugo-learning"
 demo_url: "https://hugo-learning.example.com"
 featured: true
 description: "A comprehensive Hugo tutorial site with collections and advanced features"
-image: "/images/hugo-site-preview.jpg"
+image: "https://placehold.co/600x400/000000/FFF?text=Hugo Learning\nSite"
 authors: ["john-doe", "jane-smith"]
 ---
-
-# Hugo Learning Site
 
 This project demonstrates advanced Hugo features including custom collections, templating, and content organization.
 
