@@ -1,7 +1,7 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
-disableKinds = ['taxonomy', 'term']
+baseURL = "https://example.org/"
+languageCode = "en-us"
+title = "Hugo Collections Demo"
+disableKinds = ["taxonomy", "term"]
 
 # Pagination settings (Hugo v0.128.0+ format)
 [pagination]
