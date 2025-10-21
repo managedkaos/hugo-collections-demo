@@ -240,6 +240,40 @@ This Hugo site can be deployed to any static hosting service:
 
 ### Build Commands
 
+#### Using Make (Recommended)
+
+This project includes a comprehensive Makefile with convenient targets:
+
+```bash
+# Show all available commands
+make help
+
+# Development workflow
+make dev          # Start development server
+make serve        # Start Hugo dev server with drafts
+make build        # Build site
+make clean         # Clean build artifacts
+
+# Content management
+make new-post NAME="My New Post"     # Create new blog post
+make new-project NAME="My Project"  # Create new project
+make new-author NAME="John Doe"     # Create new author
+
+# Quality assurance
+make lint         # Lint content and templates
+make format       # Format code with Prettier
+make test         # Run site tests
+make validate     # Validate HTML
+make stats        # Show site statistics
+
+# Production
+make prod         # Build for production
+make ci           # Run CI pipeline
+make deploy       # Deploy (customize for your hosting)
+```
+
+#### Direct Hugo Commands
+
 ```bash
 # Development
 hugo server -D
