@@ -1,513 +1,523 @@
 {{ define "main" }}
-<nav class="breadcrumb">
-    <a href="/">🏠 Home</a>
-    <span>→</span>
-    <span class="current">👥 Authors</span>
-</nav>
+<div class="authors-list-container">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <span class="current">👥 Authors</span>
+    </nav>
 
-<div class="authors-header">
-    <h1>{{ .Title | default "Our Authors" }}</h1>
-    <p>Meet the talented people behind our content and projects.</p>
-</div>
+    <div class="authors-header">
+        <h1>{{ .Title | default "Our Authors" }}</h1>
+        <p>Meet the talented people behind our content and projects.</p>
+    </div>
 
-<div class="authors-stats">
-    <div class="stat-card">
-        <h3>{{ len .Pages }}</h3>
-        <p>Total Authors</p>
-    </div>
-    <div class="stat-card">
-        <h3>{{ len (where .Pages "Params.featured" true) }}</h3>
-        <p>Featured Authors</p>
-    </div>
-    <div class="stat-card">
-        <h3>{{ len (where .Pages "Params.expertise_level" "Expert") }}</h3>
-        <p>Expert Level</p>
-    </div>
-    <div class="stat-card">
-        <h3>{{ len (where .Pages "Params.role" "Lead Developer") }}</h3>
-        <p>Lead Developers</p>
-    </div>
-</div>
-
-<div class="authors-filters">
-    <div class="filter-section">
-        <h3>Filter by Role:</h3>
-        <div class="filter-buttons">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="featured">Featured</button>
-            <button class="filter-btn" data-filter="expert">Expert Level</button>
-            <button class="filter-btn" data-filter="developer">Developers</button>
-            <button class="filter-btn" data-filter="designer">Designers</button>
+    <div class="authors-stats">
+        <div class="stat-card">
+            <h3>{{ len .Pages }}</h3>
+            <p>Total Authors</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.featured" true) }}</h3>
+            <p>Featured Authors</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.expertise_level" "Expert") }}</h3>
+            <p>Expert Level</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.role" "Lead Developer") }}</h3>
+            <p>Lead Developers</p>
         </div>
     </div>
 
-    <div class="search-section">
-        <h3>Search Authors:</h3>
-        <input type="text" id="authorSearch" placeholder="Search by name, role, or specialty..." class="search-input">
+    <div class="authors-filters">
+        <div class="filter-section">
+            <h3>Filter by Role:</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="featured">Featured</button>
+                <button class="filter-btn" data-filter="expert">Expert Level</button>
+                <button class="filter-btn" data-filter="developer">Developers</button>
+                <button class="filter-btn" data-filter="designer">Designers</button>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <h3>Search Authors:</h3>
+            <input type="text" id="authorSearch" placeholder="Search by name, role, or specialty..."
+                class="search-input">
+        </div>
     </div>
-</div>
 
-<div class="authors-grid" id="authorsGrid">
-    {{ range .Pages }}
-    <div class="author-card" data-featured="{{ .Params.featured }}" data-role="{{ .Params.role | lower }}"
-        data-expertise="{{ .Params.expertise_level | lower }}"
-        data-specialties="{{ delimit .Params.specialties " " | lower }}" data-name="{{ .Title | lower }}">
+    <div class="authors-grid" id="authorsGrid">
+        {{ range .Pages }}
+        <div class="author-card" data-featured="{{ .Params.featured }}" data-role="{{ .Params.role | lower }}"
+            data-expertise="{{ .Params.expertise_level | lower }}"
+            data-specialties="{{ delimit .Params.specialties " " | lower }}" data-name="{{ .Title | lower }}">
 
-        {{ if .Params.featured }}
-        <div class="featured-badge">⭐ Featured</div>
-        {{ end }}
+            {{ if .Params.featured }}
+            <div class="featured-badge">⭐ Featured</div>
+            {{ end }}
 
-        <div class="author-avatar">
-            <a href="{{ .Permalink }}" class="author-avatar-link">
-                {{ if .Params.avatar }}
-                <img src="{{ .Params.avatar }}" alt="{{ .Title }}" />
-                {{ else }}
-                <div class="avatar-placeholder">
-                    <span>{{ .Title | truncate 2 }}</span>
+            <div class="author-avatar">
+                <a href="{{ .Permalink }}" class="author-avatar-link">
+                    {{ if .Params.avatar }}
+                    <img src="{{ .Params.avatar }}" alt="{{ .Title }}" />
+                    {{ else }}
+                    <div class="avatar-placeholder">
+                        <span>{{ .Title | truncate 2 }}</span>
+                    </div>
+                    {{ end }}
+                </a>
+            </div>
+
+            <div class="author-info">
+                <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+                <p class="author-role">{{ .Params.role }}</p>
+                <p class="author-company">{{ .Params.company }}</p>
+                <p class="author-location">{{ .Params.location }}</p>
+
+                <div class="author-bio">
+                    <p>{{ .Params.bio | truncate 120 }}</p>
                 </div>
-                {{ end }}
-            </a>
-        </div>
 
-        <div class="author-info">
-            <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
-            <p class="author-role">{{ .Params.role }}</p>
-            <p class="author-company">{{ .Params.company }}</p>
-            <p class="author-location">{{ .Params.location }}</p>
+                <div class="author-specialties">
+                    {{ range first 3 .Params.specialties }}
+                    <span class="specialty-tag">{{ . }}</span>
+                    {{ end }}
+                    {{ if gt (len .Params.specialties) 3 }}
+                    <span class="specialty-more">+{{ sub (len .Params.specialties) 3 }} more</span>
+                    {{ end }}
+                </div>
 
-            <div class="author-bio">
-                <p>{{ .Params.bio | truncate 120 }}</p>
-            </div>
+                <div class="author-stats">
+                    <span class="experience">{{ .Params.years_experience }}+ years</span>
+                    <span class="level">{{ .Params.expertise_level }}</span>
+                </div>
 
-            <div class="author-specialties">
-                {{ range first 3 .Params.specialties }}
-                <span class="specialty-tag">{{ . }}</span>
-                {{ end }}
-                {{ if gt (len .Params.specialties) 3 }}
-                <span class="specialty-more">+{{ sub (len .Params.specialties) 3 }} more</span>
-                {{ end }}
-            </div>
-
-            <div class="author-stats">
-                <span class="experience">{{ .Params.years_experience }}+ years</span>
-                <span class="level">{{ .Params.expertise_level }}</span>
-            </div>
-
-            <div class="author-links">
-                {{ if .Params.github }}
-                <a href="https://github.com/{{ .Params.github }}" target="_blank" class="author-link github">GitHub</a>
-                {{ end }}
-                {{ if .Params.twitter }}
-                <a href="https://twitter.com/{{ .Params.twitter }}" target="_blank"
-                    class="author-link twitter">Twitter</a>
-                {{ end }}
-                {{ if .Params.website }}
-                <a href="{{ .Params.website }}" target="_blank" class="author-link website">Website</a>
-                {{ end }}
+                <div class="author-links">
+                    {{ if .Params.github }}
+                    <a href="https://github.com/{{ .Params.github }}" target="_blank"
+                        class="author-link github">GitHub</a>
+                    {{ end }}
+                    {{ if .Params.twitter }}
+                    <a href="https://twitter.com/{{ .Params.twitter }}" target="_blank"
+                        class="author-link twitter">Twitter</a>
+                    {{ end }}
+                    {{ if .Params.website }}
+                    <a href="{{ .Params.website }}" target="_blank" class="author-link website">Website</a>
+                    {{ end }}
+                </div>
             </div>
         </div>
+        {{ end }}
     </div>
-    {{ end }}
-</div>
 
-<style>
-    .breadcrumb {
-        margin-bottom: 2rem;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-        border-left: 4px solid #6f42c1;
-    }
+    <style>
+        .authors-list-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-    .breadcrumb a {
-        color: #6f42c1;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s;
-    }
+        .breadcrumb {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #6f42c1;
+        }
 
-    .breadcrumb a:hover {
-        color: #5a2d91;
-        text-decoration: underline;
-    }
+        .breadcrumb a {
+            color: #6f42c1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
 
-    .breadcrumb span {
-        margin: 0 0.5rem;
-        color: #666;
-    }
+        .breadcrumb a:hover {
+            color: #5a2d91;
+            text-decoration: underline;
+        }
 
-    .breadcrumb .current {
-        color: #333;
-        font-weight: bold;
-    }
+        .breadcrumb span {
+            margin: 0 0.5rem;
+            color: #666;
+        }
 
-    .authors-header {
-        text-align: center;
-        margin-bottom: 3rem;
-        padding-bottom: 2rem;
-        border-bottom: 2px solid #eee;
-    }
+        .breadcrumb .current {
+            color: #333;
+            font-weight: bold;
+        }
 
-    .authors-header h1 {
-        color: #333;
-        margin-bottom: 1rem;
-        font-size: 2.5rem;
-    }
+        .authors-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #eee;
+        }
 
-    .authors-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-bottom: 3rem;
-    }
+        .authors-header h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
 
-    .stat-card {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 8px;
-        text-align: center;
-        border: 1px solid #e9ecef;
-    }
+        .authors-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
 
-    .stat-card h3 {
-        font-size: 2rem;
-        margin: 0;
-        color: #007bff;
-    }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
 
-    .stat-card p {
-        margin: 0.5rem 0 0 0;
-        color: #666;
-        font-size: 0.9rem;
-    }
+        .stat-card h3 {
+            font-size: 2rem;
+            margin: 0;
+            color: #007bff;
+        }
 
-    .authors-filters {
-        background: #f8f9fa;
-        padding: 2rem;
-        border-radius: 12px;
-        margin-bottom: 3rem;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
+        .stat-card p {
+            margin: 0.5rem 0 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
 
-    .filter-section h3,
-    .search-section h3 {
-        margin: 0 0 1rem 0;
-        color: #333;
-        font-size: 1.1rem;
-    }
-
-    .filter-buttons {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .filter-btn {
-        padding: 0.5rem 1rem;
-        border: 1px solid #ddd;
-        background: white;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 0.9rem;
-    }
-
-    .filter-btn:hover,
-    .filter-btn.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: border-color 0.3s;
-    }
-
-    .search-input:focus {
-        outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-    }
-
-    .authors-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 2rem;
-    }
-
-    .author-card {
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-        position: relative;
-    }
-
-    .author-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .featured-badge {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: #ffc107;
-        color: #333;
-        padding: 0.3rem 0.6rem;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        z-index: 1;
-    }
-
-    .author-avatar {
-        height: 120px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-    }
-
-    .author-avatar-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        text-decoration: none;
-        transition: transform 0.3s;
-    }
-
-    .author-avatar-link:hover {
-        transform: scale(1.1);
-    }
-
-    .author-avatar img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid white;
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .author-avatar-link:hover img {
-        transform: scale(1.1);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .avatar-placeholder {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.5rem;
-        font-weight: bold;
-        transition: transform 0.3s, background 0.3s;
-    }
-
-    .author-avatar-link:hover .avatar-placeholder {
-        transform: scale(1.1);
-        background: rgba(255, 255, 255, 0.3);
-    }
-
-    .author-info {
-        padding: 1.5rem;
-    }
-
-    .author-info h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.3rem;
-    }
-
-    .author-info h2 a {
-        color: #333;
-        text-decoration: none;
-    }
-
-    .author-info h2 a:hover {
-        color: #007bff;
-    }
-
-    .author-role {
-        color: #007bff;
-        font-weight: bold;
-        margin: 0 0 0.3rem 0;
-        font-size: 0.9rem;
-    }
-
-    .author-company,
-    .author-location {
-        color: #666;
-        font-size: 0.9rem;
-        margin: 0 0 0.3rem 0;
-    }
-
-    .author-bio {
-        margin: 1rem 0;
-        color: #666;
-        line-height: 1.6;
-        font-size: 0.9rem;
-    }
-
-    .author-specialties {
-        margin: 1rem 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.3rem;
-    }
-
-    .specialty-tag {
-        background: #e9ecef;
-        color: #495057;
-        padding: 0.2rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        font-weight: bold;
-    }
-
-    .specialty-more {
-        color: #666;
-        font-size: 0.8rem;
-        font-style: italic;
-    }
-
-    .author-stats {
-        display: flex;
-        gap: 1rem;
-        margin: 1rem 0;
-        font-size: 0.9rem;
-    }
-
-    .experience {
-        color: #28a745;
-        font-weight: bold;
-    }
-
-    .level {
-        color: #007bff;
-        font-weight: bold;
-    }
-
-    .author-links {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .author-link {
-        padding: 0.3rem 0.6rem;
-        border-radius: 12px;
-        text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-
-    .author-link.github {
-        background: #333;
-        color: white;
-    }
-
-    .author-link.twitter {
-        background: #1da1f2;
-        color: white;
-    }
-
-    .author-link.website {
-        background: #007bff;
-        color: white;
-    }
-
-    .author-link:hover {
-        transform: translateY(-1px);
-        opacity: 0.9;
-    }
-
-    @media (max-width: 768px) {
         .authors-filters {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .filter-section h3,
+        .search-section h3 {
+            margin: 0 0 1rem 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
         }
 
         .authors-grid {
-            grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
         }
-    }
-</style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const searchInput = document.getElementById('authorSearch');
-        const authorCards = Array.from(document.querySelectorAll('.author-card'));
+        .author-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
 
-        let currentFilter = 'all';
-        let currentSearch = '';
+        .author-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
 
-        // Filter functionality
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                currentFilter = this.getAttribute('data-filter');
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #ffc107;
+            color: #333;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .author-avatar {
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .author-avatar-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .author-avatar-link:hover {
+            transform: scale(1.1);
+        }
+
+        .author-avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .author-avatar-link:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .author-avatar-link:hover .avatar-placeholder {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .author-info {
+            padding: 1.5rem;
+        }
+
+        .author-info h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.3rem;
+        }
+
+        .author-info h2 a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .author-info h2 a:hover {
+            color: #007bff;
+        }
+
+        .author-role {
+            color: #007bff;
+            font-weight: bold;
+            margin: 0 0 0.3rem 0;
+            font-size: 0.9rem;
+        }
+
+        .author-company,
+        .author-location {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0 0 0.3rem 0;
+        }
+
+        .author-bio {
+            margin: 1rem 0;
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .author-specialties {
+            margin: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .specialty-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .specialty-more {
+            color: #666;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        .author-stats {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .experience {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .level {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .author-link {
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .author-link.github {
+            background: #333;
+            color: white;
+        }
+
+        .author-link.twitter {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .author-link.website {
+            background: #007bff;
+            color: white;
+        }
+
+        .author-link:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .authors-filters {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .authors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const searchInput = document.getElementById('authorSearch');
+            const authorCards = Array.from(document.querySelectorAll('.author-card'));
+
+            let currentFilter = 'all';
+            let currentSearch = '';
+
+            // Filter functionality
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    applyFilters();
+                });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', function () {
+                currentSearch = this.value.toLowerCase();
                 applyFilters();
             });
+
+            function applyFilters() {
+                authorCards.forEach(card => {
+                    const matchesFilter = matchesCurrentFilter(card);
+                    const matchesSearch = matchesCurrentSearch(card);
+
+                    if (matchesFilter && matchesSearch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            function matchesCurrentFilter(card) {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'featured') return card.getAttribute('data-featured') === 'true';
+                if (currentFilter === 'expert') return card.getAttribute('data-expertise') === 'expert';
+                if (currentFilter === 'developer') return card.getAttribute('data-role').includes('developer');
+                if (currentFilter === 'designer') return card.getAttribute('data-role').includes('designer');
+                return true;
+            }
+
+            function matchesCurrentSearch(card) {
+                if (!currentSearch) return true;
+
+                const name = card.getAttribute('data-name');
+                const role = card.getAttribute('data-role');
+                const specialties = card.getAttribute('data-specialties');
+
+                return name.includes(currentSearch) ||
+                    role.includes(currentSearch) ||
+                    specialties.includes(currentSearch);
+            }
         });
-
-        // Search functionality
-        searchInput.addEventListener('input', function () {
-            currentSearch = this.value.toLowerCase();
-            applyFilters();
-        });
-
-        function applyFilters() {
-            authorCards.forEach(card => {
-                const matchesFilter = matchesCurrentFilter(card);
-                const matchesSearch = matchesCurrentSearch(card);
-
-                if (matchesFilter && matchesSearch) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function matchesCurrentFilter(card) {
-            if (currentFilter === 'all') return true;
-            if (currentFilter === 'featured') return card.getAttribute('data-featured') === 'true';
-            if (currentFilter === 'expert') return card.getAttribute('data-expertise') === 'expert';
-            if (currentFilter === 'developer') return card.getAttribute('data-role').includes('developer');
-            if (currentFilter === 'designer') return card.getAttribute('data-role').includes('designer');
-            return true;
-        }
-
-        function matchesCurrentSearch(card) {
-            if (!currentSearch) return true;
-
-            const name = card.getAttribute('data-name');
-            const role = card.getAttribute('data-role');
-            const specialties = card.getAttribute('data-specialties');
-
-            return name.includes(currentSearch) ||
-                role.includes(currentSearch) ||
-                specialties.includes(currentSearch);
-        }
-    });
-</script>
+    </script>
+</div>
 {{ end }}
