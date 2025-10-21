@@ -73,7 +73,7 @@ lint: ## Lint content and templates
 	@if command -v htmltest >/dev/null 2>&1; then \
 		htmltest -c .htmltest.yml $(BUILD_DIR) || true; \
 	else \
-		echo "$(YELLOW)htmltest not installed. Install with: brew install htmltest$(NC)"; \
+		echo "$(RED)htmltest not installed. Install with: brew install htmltest$(NC)"; \
 	fi
 	@echo "$(YELLOW)Checking for orphaned content...$(NC)"
 	@hugo --quiet --gc 2>&1 | grep -i "orphaned" || echo "$(GREEN)No orphaned content found$(NC)"

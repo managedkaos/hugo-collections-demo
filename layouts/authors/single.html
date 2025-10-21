@@ -1,5 +1,13 @@
 {{ define "main" }}
 <article class="author-single">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <a href="/authors/">👥 Authors</a>
+        <span>→</span>
+        <span class="current">{{ .Title }}</span>
+    </nav>
+
     <header class="author-header">
         {{ if .Params.featured }}
         <div class="featured-badge">⭐ Featured Author</div>
@@ -201,6 +209,36 @@
         max-width: 1000px;
         margin: 0 auto;
         padding: 2rem;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #6f42c1;
+    }
+
+    .breadcrumb a {
+        color: #6f42c1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: #5a2d91;
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+
+    .breadcrumb .current {
+        color: #333;
+        font-weight: bold;
     }
 
     .author-header {

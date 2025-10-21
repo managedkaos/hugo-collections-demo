@@ -9,8 +9,6 @@ description: "Master advanced Hugo templating and customization"
 featured: false
 ---
 
-# Advanced Hugo Techniques
-
 Once you've mastered the basics of Hugo, it's time to explore advanced techniques that will make your sites more powerful and flexible.
 
 ## Custom Collections

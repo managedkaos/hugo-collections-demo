@@ -9,8 +9,6 @@ description: "Learn the basics of Hugo static site generator"
 featured: true
 ---
 
-# Getting Started with Hugo
-
 Hugo is a fast and flexible static site generator built with Go. In this post, we'll explore the fundamentals of Hugo and how to get started.
 
 ## What is Hugo?

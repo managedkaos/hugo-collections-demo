@@ -1,5 +1,21 @@
 {{ define "main" }}
 <article class="single-page">
+  <nav class="breadcrumb">
+    <a href="/">🏠 Home</a>
+    {{ if eq .Section "blog" }}
+    <span>→</span>
+    <a href="/blog/">📝 Blog</a>
+    {{ else if eq .Section "projects" }}
+    <span>→</span>
+    <a href="/projects/">🚀 Projects</a>
+    {{ else if eq .Section "authors" }}
+    <span>→</span>
+    <a href="/authors/">👥 Authors</a>
+    {{ end }}
+    <span>→</span>
+    <span class="current">{{ .Title }}</span>
+  </nav>
+
   <header class="page-header">
     <h1>{{ .Title }}</h1>
     {{ if .Params.description }}
@@ -119,6 +135,36 @@
     max-width: 1000px;
     margin: 0 auto;
     padding: 2rem;
+  }
+
+  .breadcrumb {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+  }
+
+  .breadcrumb a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .breadcrumb a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+
+  .breadcrumb span {
+    margin: 0 0.5rem;
+    color: #666;
+  }
+
+  .breadcrumb .current {
+    color: #333;
+    font-weight: bold;
   }
 
   .page-header {

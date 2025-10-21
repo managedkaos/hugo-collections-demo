@@ -1,5 +1,13 @@
 {{ define "main" }}
 <article class="project-single">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <a href="/projects/">🚀 Projects</a>
+        <span>→</span>
+        <span class="current">{{ .Title }}</span>
+    </nav>
+
     <header class="project-header">
         {{ if .Params.featured }}
         <div class="featured-badge">⭐ Featured Project</div>
@@ -113,6 +121,36 @@
         max-width: 900px;
         margin: 0 auto;
         padding: 2rem;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    .breadcrumb a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+
+    .breadcrumb .current {
+        color: #333;
+        font-weight: bold;
     }
 
     .project-header {

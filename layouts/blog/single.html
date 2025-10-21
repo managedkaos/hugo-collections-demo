@@ -1,5 +1,13 @@
 {{ define "main" }}
 <article class="blog-post-single">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <a href="/blog/">📝 Blog</a>
+        <span>→</span>
+        <span class="current">{{ .Title }}</span>
+    </nav>
+
     <header class="post-header">
         <h1>{{ .Title }}</h1>
         <div class="post-meta">
@@ -63,6 +71,36 @@
         max-width: 800px;
         margin: 0 auto;
         padding: 2rem;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #28a745;
+    }
+
+    .breadcrumb a {
+        color: #28a745;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: #1e7e34;
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+
+    .breadcrumb .current {
+        color: #333;
+        font-weight: bold;
     }
 
     .post-header {

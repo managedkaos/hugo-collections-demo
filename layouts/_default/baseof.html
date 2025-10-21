@@ -1,9 +1,129 @@
 <!DOCTYPE html>
 <html lang="en" charset="utf-8">
+
 <head>
-</head>
-<body>
-	{{ block "main" . }}
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ if .Title }}{{ .Title }} - {{ end }}{{ .Site.Title }}</title>
+	{{ if .Params.description }}
+	<meta name="description" content="{{ .Params.description }}">
 	{{ end }}
+</head>
+
+<body>
+	<nav class="site-navigation">
+		<div class="nav-container">
+			<a href="/" class="nav-logo">
+				🏠 {{ .Site.Title | default "Hugo Site" }}
+			</a>
+			<div class="nav-links">
+				<a href="/" class="nav-link">Home</a>
+				<a href="/blog/" class="nav-link">Blog</a>
+				<a href="/projects/" class="nav-link">Projects</a>
+				<a href="/authors/" class="nav-link">Authors</a>
+			</div>
+		</div>
+	</nav>
+
+	<main class="main-content">
+		{{ block "main" . }}
+		{{ end }}
+	</main>
+
+	<footer class="site-footer">
+		<div class="footer-container">
+			<p>&copy; {{ now.Format "2006" }} {{ .Site.Title | default "Hugo Site" }}. Built with <a
+					href="https://gohugo.io" target="_blank">Hugo</a>.</p>
+		</div>
+	</footer>
+
+	<style>
+		.site-navigation {
+			background: #fff;
+			border-bottom: 2px solid #eee;
+			padding: 1rem 0;
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+
+		.nav-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 2rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.nav-logo {
+			font-size: 1.5rem;
+			font-weight: bold;
+			color: #333;
+			text-decoration: none;
+			transition: color 0.3s;
+		}
+
+		.nav-logo:hover {
+			color: #007bff;
+		}
+
+		.nav-links {
+			display: flex;
+			gap: 2rem;
+		}
+
+		.nav-link {
+			color: #666;
+			text-decoration: none;
+			font-weight: 500;
+			transition: color 0.3s;
+			padding: 0.5rem 0;
+		}
+
+		.nav-link:hover {
+			color: #007bff;
+		}
+
+		.main-content {
+			min-height: calc(100vh - 200px);
+		}
+
+		.site-footer {
+			background: #f8f9fa;
+			border-top: 1px solid #eee;
+			padding: 2rem 0;
+			margin-top: 3rem;
+		}
+
+		.footer-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 2rem;
+			text-align: center;
+			color: #666;
+		}
+
+		.footer-container a {
+			color: #007bff;
+			text-decoration: none;
+		}
+
+		.footer-container a:hover {
+			text-decoration: underline;
+		}
+
+		@media (max-width: 768px) {
+			.nav-container {
+				flex-direction: column;
+				gap: 1rem;
+			}
+
+			.nav-links {
+				gap: 1rem;
+			}
+		}
+	</style>
 </body>
+
 </html>

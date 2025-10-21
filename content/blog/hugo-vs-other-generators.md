@@ -9,8 +9,6 @@ description: "Comparing Hugo with Jekyll, Gatsby, and other popular static site 
 featured: true
 ---
 
-# Hugo vs Other Static Site Generators
-
 When choosing a static site generator, it's important to understand the differences between popular options.
 
 ## Hugo vs Jekyll
