@@ -55,3 +55,5 @@ We also discuss how to optimize your Hugo site for maximum performance and SEO, 
 - Caching strategies
 
 This episode is perfect for developers who want to take their Hugo skills to the next level!
+
+{{<youtube ea4hGPsykTI>}}

@@ -1,5 +1,5 @@
 ---
-title: "Asynchronous JavaScript and APIs"
+title: "S2E2: Asynchronous JavaScript and APIs"
 season: 2
 episode: 2
 date: 2025-01-29
@@ -48,6 +48,7 @@ The async/await syntax makes asynchronous code more readable and easier to debug
 ## Practical Examples
 
 We demonstrate:
+
 - Fetching data from a public API
 - Handling multiple async operations with Promise.all()
 - Creating a simple weather app using API data

@@ -28,6 +28,29 @@
         <a href="/projects/" class="collection-link">View All Projects →</a>
       </div>
 
+      <div class="collection-card episodes">
+        <h3>🎙️ Episodes</h3>
+        <p>Listen to our latest podcast episodes and discussions.</p>
+        <div class="collection-stats">
+          <span><strong>{{ len (where .Site.RegularPages "Section" "episodes") }}</strong> episodes</span>
+          <span><strong>{{ len (where (where .Site.RegularPages "Section" "episodes") "Params.featured" true)
+              }}</strong>
+            featured</span>
+        </div>
+        <a href="/episodes/" class="collection-link">View All Episodes →</a>
+      </div>
+
+      <div class="collection-card hosts">
+        <h3>🎙️ Hosts</h3>
+        <p>Meet the talented hosts behind our podcast episodes.</p>
+        <div class="collection-stats">
+          <span><strong>{{ len (where .Site.RegularPages "Section" "hosts") }}</strong> hosts</span>
+          <span><strong>{{ len (where (where .Site.RegularPages "Section" "hosts") "Params.featured" true) }}</strong>
+            featured</span>
+        </div>
+        <a href="/hosts/" class="collection-link">View All Hosts →</a>
+      </div>
+
       <div class="collection-card authors">
         <h3>👥 Authors</h3>
         <p>Meet the talented people behind our content and projects.</p>
@@ -70,6 +93,23 @@
           <div class="project-meta">
             <span class="status status-{{ .Params.status }}">{{ .Params.status | title }}</span>
             <span class="type">{{ .Params.project_type | title }}</span>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+
+    <div class="recent-episodes">
+      <h3>Latest Episodes</h3>
+      <div class="episode-list">
+        {{ range first 3 (where .Site.RegularPages "Section" "episodes") }}
+        <div class="episode-item">
+          <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+          <p>{{ .Params.description | default .Summary | truncate 120 }}</p>
+          <div class="episode-meta">
+            <span>Season {{ .Params.season }}, Episode {{ .Params.episode }}</span>
+            <span>{{ .Date.Format "Jan 2, 2006" }}</span>
+            {{ if .Params.featured }}<span class="featured">⭐ Featured</span>{{ end }}
           </div>
         </div>
         {{ end }}
@@ -127,6 +167,14 @@
 
   .collection-card.projects {
     border-color: #007bff;
+  }
+
+  .collection-card.episodes {
+    border-color: #9b59b6;
+  }
+
+  .collection-card.hosts {
+    border-color: #9b59b6;
   }
 
   .collection-card.authors {
@@ -187,25 +235,29 @@
   }
 
   .recent-posts,
-  .recent-projects {
+  .recent-projects,
+  .recent-episodes {
     margin-bottom: 3rem;
   }
 
   .recent-posts h3,
-  .recent-projects h3 {
+  .recent-projects h3,
+  .recent-episodes h3 {
     color: #333;
     margin-bottom: 1.5rem;
     font-size: 1.3rem;
   }
 
   .post-list,
-  .project-list {
+  .project-list,
+  .episode-list {
     display: grid;
     gap: 1.5rem;
   }
 
   .post-item,
-  .project-item {
+  .project-item,
+  .episode-item {
     background: white;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -214,37 +266,43 @@
   }
 
   .post-item:hover,
-  .project-item:hover {
+  .project-item:hover,
+  .episode-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
 
   .post-item h4,
-  .project-item h4 {
+  .project-item h4,
+  .episode-item h4 {
     margin: 0 0 0.5rem 0;
     font-size: 1.2rem;
   }
 
   .post-item h4 a,
-  .project-item h4 a {
+  .project-item h4 a,
+  .episode-item h4 a {
     color: #333;
     text-decoration: none;
   }
 
   .post-item h4 a:hover,
-  .project-item h4 a:hover {
+  .project-item h4 a:hover,
+  .episode-item h4 a:hover {
     color: #007bff;
   }
 
   .post-item p,
-  .project-item p {
+  .project-item p,
+  .episode-item p {
     color: #666;
     margin-bottom: 1rem;
     line-height: 1.6;
   }
 
   .post-meta,
-  .project-meta {
+  .project-meta,
+  .episode-meta {
     display: flex;
     gap: 1rem;
     font-size: 0.9rem;

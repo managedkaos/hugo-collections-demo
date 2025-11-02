@@ -1,0 +1,594 @@
+{{ define "main" }}
+<article class="host-single">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <a href="/hosts/">🎙️ Hosts</a>
+        <span>→</span>
+        <span class="current">{{ .Title }}</span>
+    </nav>
+
+    <header class="host-header">
+        {{ if .Params.featured }}
+        <div class="featured-badge">⭐ Featured Host</div>
+        {{ end }}
+
+        <div class="host-profile">
+            <div class="host-avatar-large">
+                {{ if .Params.avatar }}
+                <img src="{{ .Params.avatar }}" alt="{{ .Title }}" />
+                {{ else }}
+                <div class="avatar-placeholder-large">
+                    <span>{{ .Title | truncate 2 }}</span>
+                </div>
+                {{ end }}
+            </div>
+
+            <div class="host-details">
+                <h1>{{ .Title }}</h1>
+                <p class="host-role">{{ .Params.role }}</p>
+                <p class="host-company">{{ .Params.company }}</p>
+                <p class="host-location">{{ .Params.location }}</p>
+
+                <div class="host-bio-short">
+                    <p>{{ .Params.bio }}</p>
+                </div>
+
+                <div class="host-stats">
+                    <div class="stat">
+                        <strong>{{ .Params.years_experience }}+</strong>
+                        <span>Years Experience</span>
+                    </div>
+                    <div class="stat">
+                        <strong>{{ .Params.expertise_level }}</strong>
+                        <span>Level</span>
+                    </div>
+                    <div class="stat">
+                        <strong>{{ len .Params.specialties }}</strong>
+                        <span>Specialties</span>
+                    </div>
+                </div>
+
+                <div class="host-links">
+                    {{ if .Params.website }}
+                    <a href="{{ .Params.website }}" target="_blank" class="host-link website">
+                        <span>🌐</span> Website
+                    </a>
+                    {{ end }}
+                    {{ if .Params.github }}
+                    <a href="https://github.com/{{ .Params.github }}" target="_blank" class="host-link github">
+                        <span>💻</span> GitHub
+                    </a>
+                    {{ end }}
+                    {{ if .Params.twitter }}
+                    <a href="https://twitter.com/{{ .Params.twitter }}" target="_blank" class="host-link twitter">
+                        <span>🐦</span> Twitter
+                    </a>
+                    {{ end }}
+                    {{ if .Params.linkedin }}
+                    <a href="https://linkedin.com/in/{{ .Params.linkedin }}" target="_blank"
+                        class="host-link linkedin">
+                        <span>💼</span> LinkedIn
+                    </a>
+                    {{ end }}
+                    {{ if .Params.email }}
+                    <a href="mailto:{{ .Params.email }}" class="host-link email">
+                        <span>📧</span> Email
+                    </a>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="host-content">
+        <div class="host-full-bio">
+            <h2>About {{ .Title }}</h2>
+            {{ .Content }}
+        </div>
+
+        <div class="host-specialties">
+            <h2>Specialties & Expertise</h2>
+            <div class="specialties-grid">
+                {{ range .Params.specialties }}
+                <span class="specialty-tag">{{ . }}</span>
+                {{ end }}
+            </div>
+        </div>
+
+        <div class="host-content-stats">
+            <h2>Episodes Hosted by {{ .Title }}</h2>
+
+            {{ $hostSlug := .Params.slug }}
+            {{ $allPages := .Site.RegularPages }}
+            {{ $hostEpisodes := slice }}
+
+            {{ range $allPages }}
+            {{ if and (eq .Section "episodes") .Params.authors }}
+            {{ if in .Params.authors $hostSlug }}
+            {{ $hostEpisodes = $hostEpisodes | append . }}
+            {{ end }}
+            {{ end }}
+            {{ end }}
+
+            <div class="content-stats">
+                <div class="content-stat">
+                    <h3>{{ len $hostEpisodes }}</h3>
+                    <p>Episodes Hosted</p>
+                </div>
+            </div>
+
+            {{ if $hostEpisodes }}
+            <div class="host-episodes">
+                <h3>Recent Episodes</h3>
+                <div class="episodes-list">
+                    {{ range first 5 $hostEpisodes }}
+                    <div class="episode-item">
+                        <h4><a href="{{ .Permalink }}">{{ .Title }}</a></h4>
+                        <p>{{ .Params.description | default .Summary | truncate 100 }}</p>
+                        <div class="episode-meta">
+                            <span>Season {{ .Params.season }}, Episode {{ .Params.episode }}</span>
+                            <span>{{ .Date.Format "Jan 2, 2006" }}</span>
+                            {{ if .Params.featured }}<span class="featured">⭐ Featured</span>{{ end }}
+                        </div>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+
+    <footer class="host-footer">
+        <div class="related-hosts">
+            <h3>Other Hosts</h3>
+            {{ $related := .Site.RegularPages.Related . | first 3 }}
+            {{ with $related }}
+            <div class="related-grid">
+                {{ range . }}
+                <div class="related-item">
+                    <a href="{{ .Permalink }}">
+                        <h4>{{ .Title }}</h4>
+                        <p>{{ .Params.role }}</p>
+                        <span class="related-specialty">{{ .Params.specialties | first 1 }}</span>
+                    </a>
+                </div>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+
+        <div class="host-navigation">
+            {{ with .PrevInSection }}
+            <a href="{{ .Permalink }}" class="nav-link prev">
+                <span>←</span> {{ .Title }}
+            </a>
+            {{ end }}
+            {{ with .NextInSection }}
+            <a href="{{ .Permalink }}" class="nav-link next">
+                {{ .Title }} <span>→</span>
+            </a>
+            {{ end }}
+        </div>
+    </footer>
+</article>
+
+<style>
+    .host-single {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #9b59b6;
+    }
+
+    .breadcrumb a {
+        color: #9b59b6;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: #7d3c98;
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+
+    .breadcrumb .current {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .host-header {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #eee;
+        position: relative;
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ffc107;
+        color: #333;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .host-profile {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .host-avatar-large {
+        text-align: center;
+    }
+
+    .host-avatar-large img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #9b59b6;
+    }
+
+    .avatar-placeholder-large {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #9b59b6 0%, #3498db 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        font-weight: bold;
+        margin: 0 auto;
+    }
+
+    .host-details h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+    }
+
+    .host-role {
+        color: #9b59b6;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .host-company,
+    .host-location {
+        color: #666;
+        font-size: 1rem;
+        margin: 0 0 0.3rem 0;
+    }
+
+    .host-bio-short {
+        margin: 1.5rem 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .host-stats {
+        display: flex;
+        gap: 2rem;
+        margin: 1.5rem 0;
+    }
+
+    .stat {
+        text-align: center;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 1.5rem;
+        color: #9b59b6;
+        margin-bottom: 0.3rem;
+    }
+
+    .stat span {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .host-links {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+    }
+
+    .host-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.2rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .host-link.website {
+        background: #9b59b6;
+        color: white;
+    }
+
+    .host-link.github {
+        background: #333;
+        color: white;
+    }
+
+    .host-link.twitter {
+        background: #1da1f2;
+        color: white;
+    }
+
+    .host-link.linkedin {
+        background: #0077b5;
+        color: white;
+    }
+
+    .host-link.email {
+        background: #28a745;
+        color: white;
+    }
+
+    .host-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .host-content {
+        margin-bottom: 3rem;
+    }
+
+    .host-content h2 {
+        color: #333;
+        margin-top: 2.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .host-full-bio {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 8px;
+        border-left: 4px solid #9b59b6;
+        margin-bottom: 2rem;
+    }
+
+    .host-full-bio h2 {
+        margin-top: 0;
+    }
+
+    .specialties-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    .specialty-tag {
+        background: #9b59b6;
+        color: white;
+        padding: 0.8rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .content-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .content-stat {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .content-stat h3 {
+        font-size: 2rem;
+        margin: 0 0 0.5rem 0;
+        color: #9b59b6;
+    }
+
+    .content-stat p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .host-episodes {
+        margin: 2rem 0;
+    }
+
+    .host-episodes h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
+    }
+
+    .episodes-list {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .episode-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: all 0.3s;
+    }
+
+    .episode-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .episode-item h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+    }
+
+    .episode-item h4 a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .episode-item h4 a:hover {
+        color: #9b59b6;
+    }
+
+    .episode-item p {
+        color: #666;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .episode-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .featured {
+        color: #ffc107;
+        font-weight: bold;
+    }
+
+    .host-footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid #eee;
+    }
+
+    .host-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        gap: 1rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border: 2px solid #9b59b6;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #9b59b6;
+        font-weight: bold;
+        transition: all 0.3s;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .nav-link:hover {
+        background: #9b59b6;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .related-hosts h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .related-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .related-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .related-item a {
+        display: block;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .related-item h4 {
+        margin: 0 0 0.5rem 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .related-item p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .related-specialty {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .host-profile {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .host-stats {
+            justify-content: center;
+        }
+
+        .host-navigation {
+            flex-direction: column;
+        }
+    }
+</style>
+{{ end }}

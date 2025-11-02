@@ -52,13 +52,20 @@
                 <option value="title-asc">Title (A-Z)</option>
             </select>
         </div>
+
+        <div class="search-section">
+            <h3>Search Episodes:</h3>
+            <input type="text" id="episodeSearch" placeholder="Search by title, description, or tags..."
+                class="search-input">
+        </div>
     </div>
 
     <div class="episodes-grid" id="episodesGrid">
         {{ range .Pages }}
         <article class="episode-card" data-featured="{{ .Params.featured }}" data-season="{{ .Params.season }}"
             data-episode="{{ .Params.episode }}" data-date="{{ .Date.Format " 2006-01-02" }}"
-            data-title="{{ .Title | lower }}">
+            data-title="{{ .Title | lower }}" data-description="{{ .Params.description | lower }}"
+            data-tags="{{ delimit .Params.tags " " | lower }}">
             {{ if .Params.featured }}
             <div class="featured-badge">⭐ Featured</div>
             {{ end }}
@@ -232,15 +239,31 @@
         border-radius: 12px;
         margin-bottom: 2rem;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 2rem;
     }
 
     .filter-section h3,
-    .sort-section h3 {
+    .sort-section h3,
+    .search-section h3 {
         margin: 0 0 1rem 0;
         color: #333;
         font-size: 1.1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #9b59b6;
+        box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.25);
     }
 
     .filter-buttons {
@@ -504,36 +527,70 @@
     document.addEventListener('DOMContentLoaded', function () {
         const filterButtons = document.querySelectorAll('.filter-btn');
         const sortSelect = document.getElementById('sortSelect');
+        const searchInput = document.getElementById('episodeSearch');
         const episodesGrid = document.getElementById('episodesGrid');
         const episodes = Array.from(document.querySelectorAll('.episode-card'));
+
+        let currentFilter = 'all';
+        let currentSearch = '';
 
         // Filter functionality
         filterButtons.forEach(button => {
             button.addEventListener('click', function () {
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
-
-                const filter = this.getAttribute('data-filter');
-
-                episodes.forEach(episode => {
-                    if (filter === 'all') {
-                        episode.style.display = 'block';
-                    } else if (filter === 'featured') {
-                        episode.style.display = episode.getAttribute('data-featured') === 'true' ? 'block' : 'none';
-                    } else if (filter.startsWith('season-')) {
-                        const seasonNum = filter.split('-')[1];
-                        episode.style.display = episode.getAttribute('data-season') === seasonNum ? 'block' : 'none';
-                    }
-                });
-
-                applySorting();
+                currentFilter = this.getAttribute('data-filter');
+                applyFilters();
             });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', function () {
+            currentSearch = this.value.toLowerCase();
+            applyFilters();
         });
 
         // Sort functionality
         sortSelect.addEventListener('change', function () {
             applySorting();
         });
+
+        function applyFilters() {
+            episodes.forEach(episode => {
+                const matchesFilter = matchesCurrentFilter(episode);
+                const matchesSearch = matchesCurrentSearch(episode);
+
+                if (matchesFilter && matchesSearch) {
+                    episode.style.display = 'block';
+                } else {
+                    episode.style.display = 'none';
+                }
+            });
+
+            applySorting();
+        }
+
+        function matchesCurrentFilter(episode) {
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'featured') return episode.getAttribute('data-featured') === 'true';
+            if (currentFilter.startsWith('season-')) {
+                const seasonNum = currentFilter.split('-')[1];
+                return episode.getAttribute('data-season') === seasonNum;
+            }
+            return true;
+        }
+
+        function matchesCurrentSearch(episode) {
+            if (!currentSearch) return true;
+
+            const title = episode.getAttribute('data-title');
+            const description = episode.querySelector('.episode-description')?.textContent.toLowerCase() || '';
+            const tags = Array.from(episode.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+
+            return title.includes(currentSearch) ||
+                description.includes(currentSearch) ||
+                tags.includes(currentSearch);
+        }
 
         function applySorting() {
             const visibleEpisodes = episodes.filter(ep => ep.style.display !== 'none');

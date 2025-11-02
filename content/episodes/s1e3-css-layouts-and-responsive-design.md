@@ -1,5 +1,5 @@
 ---
-title: "CSS Layouts and Responsive Design"
+title: "S1E3: CSS Layouts and Responsive Design"
 season: 1
 episode: 3
 date: 2025-01-15
@@ -47,6 +47,7 @@ Starting with mobile designs and progressively enhancing for larger screens ensu
 ## Practical Examples
 
 We demonstrate building:
+
 - A responsive navigation bar using Flexbox
 - A card grid layout using CSS Grid
 - A complete responsive page combining both techniques

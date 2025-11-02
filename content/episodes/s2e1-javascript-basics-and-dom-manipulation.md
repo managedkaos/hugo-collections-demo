@@ -1,5 +1,5 @@
 ---
-title: "JavaScript Basics and DOM Manipulation"
+title: "S2E1: JavaScript Basics and DOM Manipulation"
 season: 2
 episode: 1
 date: 2025-01-22
@@ -47,6 +47,7 @@ Using `querySelector`, `querySelectorAll`, and other methods to interact with pa
 ## Practical Examples
 
 We build interactive features including:
+
 - A dynamic counter with increment/decrement buttons
 - A simple form validator
 - An interactive image gallery

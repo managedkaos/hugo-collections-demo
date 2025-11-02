@@ -1,0 +1,383 @@
+{{ define "main" }}
+<article class="about-page">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <span class="current">{{ .Title }}</span>
+    </nav>
+
+    <header class="about-header">
+        <h1>{{ .Title }}</h1>
+        {{ if .Params.description }}
+        <p class="about-description">{{ .Params.description }}</p>
+        {{ end }}
+    </header>
+
+    <div class="about-content">
+        {{ .Content }}
+    </div>
+
+    <div class="authors-section">
+        <h2>Meet Our Hosts</h2>
+        <p class="section-intro">The talented hosts behind our podcast episodes.</p>
+
+        <div class="authors-grid">
+            {{ range where .Site.RegularPages "Section" "hosts" }}
+            <div class="author-card">
+                <div class="author-avatar-wrapper">
+                    <a href="{{ .Permalink }}" class="author-avatar-link">
+                        {{ if .Params.avatar }}
+                        <img src="{{ .Params.avatar }}" alt="{{ .Title }}" class="author-avatar-img" />
+                        {{ else }}
+                        <div class="author-avatar-placeholder">
+                            <span>{{ .Title | truncate 2 }}</span>
+                        </div>
+                        {{ end }}
+                    </a>
+                </div>
+
+                <div class="author-info">
+                    <h3 class="author-name">
+                        <a href="{{ .Permalink }}">{{ .Title }}</a>
+                    </h3>
+                    <p class="author-role">{{ .Params.role }}</p>
+
+                    <div class="author-bio">
+                        <p>{{ .Params.bio }}</p>
+                    </div>
+
+                    <div class="author-social-links">
+                        {{ if .Params.website }}
+                        <a href="{{ .Params.website }}" target="_blank" class="social-link website" title="Website">
+                            <span>🌐</span>
+                        </a>
+                        {{ end }}
+                        {{ if .Params.github }}
+                        <a href="https://github.com/{{ .Params.github }}" target="_blank" class="social-link github"
+                            title="GitHub">
+                            <span>💻</span>
+                        </a>
+                        {{ end }}
+                        {{ if .Params.twitter }}
+                        <a href="https://twitter.com/{{ .Params.twitter }}" target="_blank" class="social-link twitter"
+                            title="Twitter">
+                            <span>🐦</span>
+                        </a>
+                        {{ end }}
+                        {{ if .Params.linkedin }}
+                        <a href="https://linkedin.com/in/{{ .Params.linkedin }}" target="_blank"
+                            class="social-link linkedin" title="LinkedIn">
+                            <span>💼</span>
+                        </a>
+                        {{ end }}
+                        {{ if .Params.email }}
+                        <a href="mailto:{{ .Params.email }}" class="social-link email" title="Email">
+                            <span>📧</span>
+                        </a>
+                        {{ end }}
+                    </div>
+
+                    <a href="{{ .Permalink }}" class="author-link-button">View Full Profile →</a>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</article>
+
+<style>
+    .about-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    .breadcrumb a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+
+    .breadcrumb .current {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .about-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #eee;
+    }
+
+    .about-header h1 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 2.5rem;
+    }
+
+    .about-description {
+        color: #666;
+        font-size: 1.2rem;
+        font-style: italic;
+    }
+
+    .about-content {
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 4rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .about-content p {
+        margin-bottom: 1.5rem;
+    }
+
+    .authors-section {
+        margin-top: 4rem;
+        padding-top: 3rem;
+        border-top: 2px solid #eee;
+    }
+
+    .authors-section h2 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .section-intro {
+        text-align: center;
+        color: #666;
+        margin-bottom: 3rem;
+        font-size: 1.1rem;
+    }
+
+    .authors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .author-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 2rem;
+        transition: all 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .author-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-color: #007bff;
+    }
+
+    .author-avatar-wrapper {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .author-avatar-link {
+        display: inline-block;
+        text-decoration: none;
+        transition: transform 0.3s;
+    }
+
+    .author-avatar-link:hover {
+        transform: scale(1.05);
+    }
+
+    .author-avatar-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #007bff;
+        display: block;
+    }
+
+    .author-avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: bold;
+        border: 3px solid #007bff;
+    }
+
+    .author-info {
+        text-align: center;
+    }
+
+    .author-name {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.3rem;
+    }
+
+    .author-name a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .author-name a:hover {
+        color: #007bff;
+    }
+
+    .author-role {
+        color: #007bff;
+        font-weight: bold;
+        margin: 0 0 1rem 0;
+        font-size: 0.95rem;
+    }
+
+    .author-bio {
+        margin: 1.5rem 0;
+        color: #666;
+        line-height: 1.6;
+        font-size: 0.95rem;
+        min-height: 4.5em;
+    }
+
+    .author-bio p {
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .author-social-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.8rem;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+
+    .social-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .social-link.website {
+        background: #007bff;
+        color: white;
+    }
+
+    .social-link.website:hover {
+        background: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .social-link.github {
+        background: #333;
+        color: white;
+    }
+
+    .social-link.github:hover {
+        background: #000;
+        border-color: #000;
+    }
+
+    .social-link.twitter {
+        background: #1da1f2;
+        color: white;
+    }
+
+    .social-link.twitter:hover {
+        background: #0d8bd9;
+        border-color: #0d8bd9;
+    }
+
+    .social-link.linkedin {
+        background: #0077b5;
+        color: white;
+    }
+
+    .social-link.linkedin:hover {
+        background: #005885;
+        border-color: #005885;
+    }
+
+    .social-link.email {
+        background: #28a745;
+        color: white;
+    }
+
+    .social-link.email:hover {
+        background: #1e7e34;
+        border-color: #1e7e34;
+    }
+
+    .author-link-button {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.7rem 1.5rem;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+    }
+
+    .author-link-button:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .authors-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .about-content {
+            padding: 0 1rem;
+        }
+    }
+</style>
+{{ end }}

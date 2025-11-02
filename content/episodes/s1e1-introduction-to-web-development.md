@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Web Development"
+title: "S1E1: Introduction to Web Development"
 season: 1
 episode: 1
 date: 2025-01-01

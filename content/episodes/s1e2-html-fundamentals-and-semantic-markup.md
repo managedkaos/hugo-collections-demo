@@ -1,5 +1,5 @@
 ---
-title: "HTML Fundamentals and Semantic Markup"
+title: "S1E2: HTML Fundamentals and Semantic Markup"
 season: 1
 episode: 2
 date: 2025-01-08

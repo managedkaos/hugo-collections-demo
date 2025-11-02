@@ -1,5 +1,5 @@
 ---
-title: "Introduction to React and Components"
+title: "S2E3: Introduction to React and Components"
 season: 2
 episode: 3
 date: 2025-02-05
@@ -52,6 +52,7 @@ React's useState hook provides a way to manage component state and trigger re-re
 ## Practical Examples
 
 We build:
+
 - A simple counter component
 - A reusable button component with props
 - A todo list application
@@ -60,6 +61,7 @@ We build:
 ## React Ecosystem
 
 We discuss the broader React ecosystem including:
+
 - Create React App and Vite
 - React Router for navigation
 - State management libraries

@@ -37,13 +37,20 @@
                 <option value="title-desc">Title (Z-A)</option>
             </select>
         </div>
+
+        <div class="search-section">
+            <h3>Search Posts:</h3>
+            <input type="text" id="blogSearch" placeholder="Search by title, description, or tags..."
+                class="search-input">
+        </div>
     </div>
 
     <div class="blog-posts" id="blogPosts">
         {{ range .Pages }}
         <article class="blog-post" data-featured="{{ .Params.featured }}"
             data-category="{{ .Params.categories | first 1 }}" data-date="{{ .Date.Format " 2006-01-02" }}"
-            data-title="{{ .Title | lower }}">
+            data-title="{{ .Title | lower }}" data-description="{{ .Params.description | lower }}"
+            data-tags="{{ delimit .Params.tags " " | lower }}">
             <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
             <div class="post-meta">
                 <span class="date">{{ .Date.Format "January 2, 2006" }}</span>
@@ -154,19 +161,35 @@
 
         .blog-controls {
             background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
+            padding: 2rem;
+            border-radius: 12px;
             margin-bottom: 2rem;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 2rem;
         }
 
         .filter-section h3,
-        .sort-section h3 {
+        .sort-section h3,
+        .search-section h3 {
             margin: 0 0 1rem 0;
             color: #333;
             font-size: 1.1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
         }
 
         .filter-buttons {
@@ -331,49 +354,74 @@
         document.addEventListener('DOMContentLoaded', function () {
             const filterButtons = document.querySelectorAll('.filter-btn');
             const sortSelect = document.getElementById('sortSelect');
+            const searchInput = document.getElementById('blogSearch');
             const blogPosts = document.getElementById('blogPosts');
             const posts = Array.from(document.querySelectorAll('.blog-post'));
+
+            let currentFilter = 'all';
+            let currentSearch = '';
 
             // Filter functionality
             filterButtons.forEach(button => {
                 button.addEventListener('click', function () {
-                    // Remove active class from all buttons
                     filterButtons.forEach(btn => btn.classList.remove('active'));
-                    // Add active class to clicked button
                     this.classList.add('active');
-
-                    const filter = this.getAttribute('data-filter');
-
-                    posts.forEach(post => {
-                        if (filter === 'all') {
-                            post.style.display = 'block';
-                        } else if (filter === 'featured') {
-                            if (post.getAttribute('data-featured') === 'true') {
-                                post.style.display = 'block';
-                            } else {
-                                post.style.display = 'none';
-                            }
-                        } else if (filter === 'tutorials') {
-                            if (post.getAttribute('data-category') === 'tutorials') {
-                                post.style.display = 'block';
-                            } else {
-                                post.style.display = 'none';
-                            }
-                        } else if (filter === 'reviews') {
-                            if (post.getAttribute('data-category') === 'reviews') {
-                                post.style.display = 'block';
-                            } else {
-                                post.style.display = 'none';
-                            }
-                        }
-                    });
+                    currentFilter = this.getAttribute('data-filter');
+                    applyFilters();
                 });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', function () {
+                currentSearch = this.value.toLowerCase();
+                applyFilters();
             });
 
             // Sort functionality
             sortSelect.addEventListener('change', function () {
-                const sortBy = this.value;
+                applySorting();
+            });
+
+            function applyFilters() {
+                posts.forEach(post => {
+                    const matchesFilter = matchesCurrentFilter(post);
+                    const matchesSearch = matchesCurrentSearch(post);
+
+                    if (matchesFilter && matchesSearch) {
+                        post.style.display = 'block';
+                    } else {
+                        post.style.display = 'none';
+                    }
+                });
+
+                applySorting();
+            }
+
+            function matchesCurrentFilter(post) {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'featured') return post.getAttribute('data-featured') === 'true';
+                if (currentFilter === 'tutorials') return post.getAttribute('data-category') === 'tutorials';
+                if (currentFilter === 'reviews') return post.getAttribute('data-category') === 'reviews';
+                return true;
+            }
+
+            function matchesCurrentSearch(post) {
+                if (!currentSearch) return true;
+
+                const title = post.getAttribute('data-title');
+                const description = post.getAttribute('data-description');
+                const tags = post.getAttribute('data-tags');
+                const excerpt = post.querySelector('.post-excerpt')?.textContent.toLowerCase() || '';
+
+                return title.includes(currentSearch) ||
+                    description.includes(currentSearch) ||
+                    tags.includes(currentSearch) ||
+                    excerpt.includes(currentSearch);
+            }
+
+            function applySorting() {
                 const visiblePosts = posts.filter(post => post.style.display !== 'none');
+                const sortBy = sortSelect.value;
 
                 visiblePosts.sort((a, b) => {
                     switch (sortBy) {
@@ -390,11 +438,10 @@
                     }
                 });
 
-                // Reorder posts in DOM
                 visiblePosts.forEach(post => {
                     blogPosts.appendChild(post);
                 });
-            });
+            }
         });
     </script>
 </div>
