@@ -1,0 +1,88 @@
+{{/* Spotify Player Partial
+
+Usage: {{ partial "episode-spotify.html" (dict "code" "EPISODE_ID" "title" "Episode Title") }}
+
+Parameters:
+- code: Spotify episode URI or ID (format: "spotify:episode:XXXXX" or just "XXXXX")
+- title: Optional title for accessibility (defaults to "Spotify Episode")
+*/}}
+
+{{ $episodeCode := .code }}
+{{ $title := .title | default "Spotify Episode" }}
+
+{{ if $episodeCode }}
+<div class="audio-player spotify-player">
+    <div class="player-header">
+        <h3>🎵 Listen on Spotify</h3>
+    </div>
+    <div class="audio-container">
+        {{/* Extract episode ID from URI if full URI is provided */}}
+        {{ $episodeId := $episodeCode }}
+        {{ if in $episodeCode "spotify:episode:" }}
+        {{ $episodeId = replace $episodeCode "spotify:episode:" "" }}
+        {{ else if in $episodeCode "open.spotify.com" }}
+        {{ $episodeId = index (last 1 (split $episodeCode "/")) 0 }}
+        {{ end }}
+
+        <iframe src="https://open.spotify.com/embed/episode/{{ $episodeId }}?utm_source=generator&theme=0"
+            title="{{ $title }}" width="100%" height="232" frameborder="0" allowtransparency="true"
+            allow="encrypted-media" class="spotify-iframe">
+        </iframe>
+    </div>
+    <div class="player-footer">
+        <a href="https://open.spotify.com/episode/{{ $episodeId }}" target="_blank" class="external-link">
+            Listen on Spotify ↗
+        </a>
+    </div>
+</div>
+
+<style>
+    .spotify-player {
+        margin: 2rem 0;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .player-header {
+        background: #1DB954;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .player-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .audio-container {
+        padding: 1rem;
+        background: #f8f9fa;
+    }
+
+    .spotify-iframe {
+        border-radius: 8px;
+        display: block;
+    }
+
+    .player-footer {
+        padding: 1rem;
+        text-align: center;
+        background: #f8f9fa;
+    }
+
+    .external-link {
+        color: #1DB954;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .external-link:hover {
+        color: #1ed760;
+        text-decoration: underline;
+    }
+</style>
+{{ end }}

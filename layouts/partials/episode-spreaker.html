@@ -1,0 +1,86 @@
+{{/* Spreaker Player Partial
+
+Usage: {{ partial "episode-spreaker.html" (dict "code" "EPISODE_ID" "title" "Episode Title") }}
+
+Parameters:
+- code: Spreaker episode ID or embed code (can be full URL or just ID)
+- title: Optional title for accessibility (defaults to "Spreaker Episode")
+*/}}
+
+{{ $episodeCode := .code }}
+{{ $title := .title | default "Spreaker Episode" }}
+
+{{ if $episodeCode }}
+<div class="audio-player spreaker-player">
+    <div class="player-header">
+        <h3>🎙️ Listen on Spreaker</h3>
+    </div>
+    <div class="audio-container">
+        {{/* Extract episode ID from URL if full URL is provided */}}
+        {{ $episodeId := $episodeCode }}
+        {{ if in $episodeCode "spreaker.com" }}
+        {{ $episodeId = index (last 1 (split $episodeCode "/")) 0 }}
+        {{ end }}
+
+        <iframe
+            src="https://widget.spreaker.com/player?episode_id={{ $episodeId }}&theme=light&playlist=false&autoplay=false"
+            title="{{ $title }}" allow="autoplay" width="100%" height="200px" frameborder="0" class="spreaker-iframe">
+        </iframe>
+    </div>
+    <div class="player-footer">
+        <a href="https://www.spreaker.com/episode/{{ $episodeId }}" target="_blank" class="external-link">
+            Listen on Spreaker ↗
+        </a>
+    </div>
+</div>
+
+<style>
+    .spreaker-player {
+        margin: 2rem 0;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .player-header {
+        background: #ff6600;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .player-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .audio-container {
+        padding: 1rem;
+        background: #f8f9fa;
+    }
+
+    .spreaker-iframe {
+        border-radius: 8px;
+        display: block;
+    }
+
+    .player-footer {
+        padding: 1rem;
+        text-align: center;
+        background: #f8f9fa;
+    }
+
+    .external-link {
+        color: #ff6600;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .external-link:hover {
+        color: #cc5500;
+        text-decoration: underline;
+    }
+</style>
+{{ end }}

@@ -1,0 +1,561 @@
+{{ define "main" }}
+<article class="episode-single">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <a href="/episodes/">🎙️ Episodes</a>
+        <span>→</span>
+        <span class="current">{{ .Title }}</span>
+    </nav>
+
+    <header class="episode-header">
+        {{ if .Params.featured }}
+        <div class="featured-badge">⭐ Featured Episode</div>
+        {{ end }}
+
+        <div class="episode-number">
+            <span class="season-badge">Season {{ .Params.season }}</span>
+            <span class="episode-badge">Episode {{ .Params.episode }}</span>
+        </div>
+
+        <h1>{{ .Title }}</h1>
+
+        <div class="episode-meta">
+            <div class="meta-item">
+                <strong>Date:</strong> {{ .Date.Format "January 2, 2006" }}
+            </div>
+            {{ if .Params.authors }}
+            <div class="meta-item">
+                <strong>Hosts:</strong>
+                <div class="authors-list">
+                    {{ range $i, $authorSlug := .Params.authors }}
+                    {{ $author := $.Site.GetPage (printf "/authors/%s" $authorSlug) }}
+                    {{ if $author }}
+                    {{ if $i }}, {{ end }}<a href="{{ $author.Permalink }}" class="author-link">{{ $author.Title }}</a>
+                    {{ end }}
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
+            {{ if .Params.status }}
+            <div class="meta-item">
+                <strong>Status:</strong>
+                <span class="status-badge status-{{ .Params.status }}">{{ .Params.status | title }}</span>
+            </div>
+            {{ end }}
+        </div>
+
+        {{ if .Params.description }}
+        <div class="episode-description">
+            <p>{{ .Params.description }}</p>
+        </div>
+        {{ end }}
+
+        {{ if .Params.tags }}
+        <div class="episode-tags">
+            {{ range .Params.tags }}
+            <span class="tag">{{ . }}</span>
+            {{ end }}
+        </div>
+        {{ end }}
+    </header>
+
+    {{ if .Params.image }}
+    <div class="episode-image">
+        <img src="{{ .Params.image }}" alt="{{ .Title }}" />
+    </div>
+    {{ end }}
+
+    <!-- Media Players Section -->
+    <div class="episode-players">
+        <h2>Listen & Watch</h2>
+
+        {{/* YouTube Player - for video content */}}
+        {{ if .Params.youtube }}
+        {{ partial "episode-youtube.html" (dict "code" .Params.youtube "title" (printf "%s - YouTube" .Title)) }}
+        {{ end }}
+
+        {{/* Audio Players - Spotify or Spreaker (but not both) */}}
+        {{ if .Params.spotify }}
+        {{ partial "episode-spotify.html" (dict "code" .Params.spotify "title" (printf "%s - Spotify" .Title)) }}
+        {{ else if .Params.spreaker }}
+        {{ partial "episode-spreaker.html" (dict "code" .Params.spreaker "title" (printf "%s - Spreaker" .Title)) }}
+        {{ end }}
+
+        {{/* Apple Podcast Link (if no Spotify/Spreaker, or as additional link) */}}
+        {{ if and .Params.apple (not .Params.spotify) (not .Params.spreaker) }}
+        <div class="podcast-link-card">
+            <h3>🍎 Listen on Apple Podcasts</h3>
+            <a href="{{ .Params.apple }}" target="_blank" class="external-link-btn">
+                Open in Apple Podcasts ↗
+            </a>
+        </div>
+        {{ end }}
+
+        {{/* Additional platform links */}}
+        {{ if or .Params.apple .Params.spotify .Params.spreaker }}
+        <div class="platform-links">
+            <h3>Available on:</h3>
+            <div class="links-grid">
+                {{ if .Params.youtube }}
+                <a href="https://www.youtube.com/watch?v={{ .Params.youtube }}" target="_blank"
+                    class="platform-link youtube">
+                    📺 YouTube
+                </a>
+                {{ end }}
+                {{ if .Params.spotify }}
+                <a href="https://open.spotify.com/episode/{{ .Params.spotify }}" target="_blank"
+                    class="platform-link spotify">
+                    🎵 Spotify
+                </a>
+                {{ end }}
+                {{ if .Params.spreaker }}
+                <a href="https://www.spreaker.com/episode/{{ .Params.spreaker }}" target="_blank"
+                    class="platform-link spreaker">
+                    🎙️ Spreaker
+                </a>
+                {{ end }}
+                {{ if .Params.apple }}
+                <a href="{{ .Params.apple }}" target="_blank" class="platform-link apple">
+                    🍎 Apple Podcasts
+                </a>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+
+    <!-- Episode Content -->
+    <div class="episode-content">
+        {{ .Content }}
+    </div>
+
+    {{ if .Params.technologies }}
+    <div class="episode-technologies">
+        <h2>Technologies Discussed</h2>
+        <div class="tech-grid">
+            {{ range .Params.technologies }}
+            <span class="tech-tag">{{ . }}</span>
+            {{ end }}
+        </div>
+    </div>
+    {{ end }}
+
+    <footer class="episode-footer">
+        <div class="episode-navigation">
+            {{ with .PrevInSection }}
+            <a href="{{ .Permalink }}" class="nav-link prev">
+                <span>←</span> {{ .Title }}
+            </a>
+            {{ end }}
+            {{ with .NextInSection }}
+            <a href="{{ .Permalink }}" class="nav-link next">
+                {{ .Title }} <span>→</span>
+            </a>
+            {{ end }}
+        </div>
+
+        <div class="related-episodes">
+            <h3>Other Episodes</h3>
+            {{ $related := .Site.RegularPages.Related . | first 3 }}
+            {{ with $related }}
+            <div class="related-grid">
+                {{ range . }}
+                <div class="related-item">
+                    <a href="{{ .Permalink }}">
+                        <h4>{{ .Title }}</h4>
+                        <p>{{ .Params.description | truncate 100 }}</p>
+                        <span class="related-episode">S{{ .Params.season }}E{{ .Params.episode }}</span>
+                    </a>
+                </div>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </footer>
+</article>
+
+<style>
+    .episode-single {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #9b59b6;
+    }
+
+    .breadcrumb a {
+        color: #9b59b6;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: #7d3c98;
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+
+    .breadcrumb .current {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .episode-header {
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #eee;
+        position: relative;
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ffc107;
+        color: #333;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .episode-number {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .season-badge,
+    .episode-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .season-badge {
+        background: #9b59b6;
+        color: white;
+    }
+
+    .episode-badge {
+        background: #3498db;
+        color: white;
+    }
+
+    .episode-header h1 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+    }
+
+    .episode-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .meta-item {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .status-badge {
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .episode-description {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #9b59b6;
+        margin-bottom: 1rem;
+    }
+
+    .episode-tags {
+        margin-top: 1rem;
+    }
+
+    .tag {
+        display: inline-block;
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        margin-right: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .episode-image {
+        margin: 2rem 0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .episode-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .episode-players {
+        margin: 3rem 0;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .episode-players h2 {
+        color: #333;
+        margin-bottom: 2rem;
+        font-size: 1.8rem;
+    }
+
+    .podcast-link-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .podcast-link-card h3 {
+        margin: 0 0 1rem 0;
+        color: #333;
+    }
+
+    .external-link-btn {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: #9b59b6;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .external-link-btn:hover {
+        background: #7d3c98;
+        transform: translateY(-2px);
+    }
+
+    .platform-links {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #ddd;
+    }
+
+    .platform-links h3 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .platform-link {
+        display: block;
+        padding: 1rem;
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .platform-link.youtube {
+        color: #c62828;
+    }
+
+    .platform-link.youtube:hover {
+        border-color: #c62828;
+        background: #ffebee;
+    }
+
+    .platform-link.spotify {
+        color: #2e7d32;
+    }
+
+    .platform-link.spotify:hover {
+        border-color: #2e7d32;
+        background: #e8f5e9;
+    }
+
+    .platform-link.spreaker {
+        color: #e65100;
+    }
+
+    .platform-link.spreaker:hover {
+        border-color: #e65100;
+        background: #fff3e0;
+    }
+
+    .platform-link.apple {
+        color: #6a1b9a;
+    }
+
+    .platform-link.apple:hover {
+        border-color: #6a1b9a;
+        background: #f3e5f5;
+    }
+
+    .episode-content {
+        line-height: 1.8;
+        margin: 3rem 0;
+    }
+
+    .episode-content h2 {
+        color: #333;
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+    }
+
+    .episode-technologies {
+        margin: 3rem 0;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .episode-technologies h2 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .tech-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .tech-tag {
+        background: #9b59b6;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .episode-footer {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid #eee;
+    }
+
+    .episode-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        gap: 1rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border: 2px solid #9b59b6;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #9b59b6;
+        font-weight: bold;
+        transition: all 0.3s;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .nav-link:hover {
+        background: #9b59b6;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .related-episodes h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .related-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .related-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .related-item a {
+        display: block;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .related-item h4 {
+        margin: 0 0 0.5rem 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .related-item p {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .related-episode {
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+</style>
+{{ end }}

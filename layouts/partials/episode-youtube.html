@@ -1,0 +1,127 @@
+{{/* YouTube Player Partial
+
+Usage: {{ partial "episode-youtube.html" (dict "code" "VIDEO_ID_OR_URL" "title" "Video Title") }}
+
+Parameters:
+- code: YouTube video ID, full embed URL (with query parameters), or watch URL
+Examples:
+- Video ID: "ea4hGPsykTI"
+- Full embed URL (RECOMMENDED): "https://www.youtube.com/embed/ea4hGPsykTI?si=bSCRrjeoPbm9vFdM"
+(This preserves all query parameters from YouTube's share/embed code)
+- Watch URL: "https://www.youtube.com/watch?v=ea4hGPsykTI"
+- Short URL: "https://youtu.be/ea4hGPsykTI"
+- title: Optional title for accessibility (defaults to "YouTube Video")
+
+Note: When using the full embed URL from YouTube's "Share" → "Embed" option,
+all query parameters (like ?si=...) are preserved automatically.
+*/}}
+
+{{ $videoCode := .code }}
+{{ $title := .title | default "YouTube Video" }}
+
+{{ if $videoCode }}
+{{/* Extract video ID and handle different input formats */}}
+{{ $embedUrl := "" }}
+{{ $videoId := "" }}
+
+{{ if in $videoCode "youtube.com/embed/" }}
+{{/* Full embed URL provided - use it as-is (preserves query parameters) */}}
+{{ $embedUrl = $videoCode }}
+{{/* Extract video ID for the watch link */}}
+{{ $videoId = index (last 1 (split (index (split $videoCode "?") 0) "/")) 0 }}
+{{ else if in $videoCode "youtube.com/watch" }}
+{{/* Watch URL provided - extract video ID */}}
+{{ $parts := split $videoCode "v=" }}
+{{ if gt (len $parts) 1 }}
+{{ $videoId = index (split (index $parts 1) "&") 0 }}
+{{ end }}
+{{ $embedUrl = printf "https://www.youtube.com/embed/%s" $videoId }}
+{{ else if in $videoCode "youtu.be/" }}
+{{/* Short URL provided - extract video ID */}}
+{{ $videoId = index (last 1 (split $videoCode "/")) 0 }}
+{{ $videoId = index (split $videoId "?") 0 }}
+{{ $embedUrl = printf "https://www.youtube.com/embed/%s" $videoId }}
+{{ else }}
+{{/* Just video ID provided */}}
+{{ $videoId = $videoCode }}
+{{ $embedUrl = printf "https://www.youtube.com/embed/%s" $videoId }}
+{{ end }}
+
+{{/* Ensure we have a video ID for the watch link */}}
+{{ if not $videoId }}
+{{ $videoId = $videoCode }}
+{{ end }}
+
+<div class="video-player youtube-player">
+    <div class="player-header">
+        <h3>📺 Watch on YouTube</h3>
+    </div>
+    <div class="video-container">
+        <iframe src="{{ $embedUrl }}" title="{{ $title }}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen frameborder="0" class="youtube-iframe">
+        </iframe>
+    </div>
+    <div class="player-footer">
+        <a href="https://www.youtube.com/watch?v={{ $videoId }}" target="_blank" class="external-link">
+            Watch on YouTube ↗
+        </a>
+    </div>
+</div>
+
+<style>
+    .youtube-player {
+        margin: 2rem 0;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .player-header {
+        background: #FF0000;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .player-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        /* 16:9 aspect ratio */
+        height: 0;
+        overflow: hidden;
+    }
+
+    .youtube-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .player-footer {
+        padding: 1rem;
+        text-align: center;
+        background: #f8f9fa;
+    }
+
+    .external-link {
+        color: #FF0000;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    .external-link:hover {
+        color: #cc0000;
+        text-decoration: underline;
+    }
+</style>
+{{ end }}

@@ -1,0 +1,569 @@
+{{ define "main" }}
+<div class="episodes-list-container">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <span class="current">🎙️ Episodes</span>
+    </nav>
+
+    <div class="episodes-header">
+        <h1>{{ .Title | default "Podcast Episodes" }}</h1>
+        <p>Listen to our latest podcast episodes and discussions.</p>
+    </div>
+
+    <div class="episodes-stats">
+        <div class="stat-card">
+            <h3>{{ len .Pages }}</h3>
+            <p>Total Episodes</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.featured" true) }}</h3>
+            <p>Featured</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.status" "completed") }}</h3>
+            <p>Published</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ $seasons := .Pages.GroupByParam "season" }}{{ len $seasons }}</h3>
+            <p>Seasons</p>
+        </div>
+    </div>
+
+    <div class="episodes-filters">
+        <div class="filter-section">
+            <h3>Filter Episodes</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Episodes</button>
+                <button class="filter-btn" data-filter="featured">Featured Only</button>
+                <button class="filter-btn" data-filter="season-3">Season 3</button>
+                <button class="filter-btn" data-filter="season-2">Season 2</button>
+                <button class="filter-btn" data-filter="season-1">Season 1</button>
+            </div>
+        </div>
+
+        <div class="sort-section">
+            <h3>Sort By</h3>
+            <select id="sortSelect" class="sort-select">
+                <option value="date-desc">Date (Newest First)</option>
+                <option value="date-asc">Date (Oldest First)</option>
+                <option value="season-episode-desc">Season & Episode (Newest)</option>
+                <option value="season-episode-asc">Season & Episode (Oldest)</option>
+                <option value="title-asc">Title (A-Z)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="episodes-grid" id="episodesGrid">
+        {{ range .Pages }}
+        <article class="episode-card" data-featured="{{ .Params.featured }}" data-season="{{ .Params.season }}"
+            data-episode="{{ .Params.episode }}" data-date="{{ .Date.Format " 2006-01-02" }}"
+            data-title="{{ .Title | lower }}">
+            {{ if .Params.featured }}
+            <div class="featured-badge">⭐ Featured</div>
+            {{ end }}
+
+            {{ if .Params.image }}
+            <div class="episode-image">
+                <a href="{{ .Permalink }}">
+                    <img src="{{ .Params.image }}" alt="{{ .Title }}" />
+                </a>
+            </div>
+            {{ else }}
+            <div class="episode-image placeholder">
+                <a href="{{ .Permalink }}">
+                    <span>S{{ .Params.season }}E{{ .Params.episode }}</span>
+                </a>
+            </div>
+            {{ end }}
+
+            <div class="episode-content">
+                <div class="episode-number">
+                    <span class="season-badge">Season {{ .Params.season }}</span>
+                    <span class="episode-badge">Episode {{ .Params.episode }}</span>
+                </div>
+
+                <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+
+                <div class="episode-meta">
+                    <span class="date">{{ .Date.Format "January 2, 2006" }}</span>
+                    {{ if .Params.authors }}
+                    <span class="authors">
+                        by
+                        {{ range $i, $authorSlug := .Params.authors }}
+                        {{ $author := $.Site.GetPage (printf "/authors/%s" $authorSlug) }}
+                        {{ if $author }}
+                        {{ if $i }}, {{ end }}<a href="{{ $author.Permalink }}">{{ $author.Title }}</a>
+                        {{ end }}
+                        {{ end }}
+                    </span>
+                    {{ end }}
+                </div>
+
+                {{ if .Params.description }}
+                <p class="episode-description">{{ .Params.description }}</p>
+                {{ end }}
+
+                {{ if .Params.tags }}
+                <div class="episode-tags">
+                    {{ range .Params.tags }}
+                    <span class="tag">{{ . }}</span>
+                    {{ end }}
+                </div>
+                {{ end }}
+
+                <div class="episode-platforms">
+                    {{ if .Params.youtube }}
+                    <span class="platform-badge youtube">📺 YouTube</span>
+                    {{ end }}
+                    {{ if .Params.spotify }}
+                    <span class="platform-badge spotify">🎵 Spotify</span>
+                    {{ end }}
+                    {{ if .Params.spreaker }}
+                    <span class="platform-badge spreaker">🎙️ Spreaker</span>
+                    {{ end }}
+                    {{ if .Params.apple }}
+                    <span class="platform-badge apple">🍎 Apple</span>
+                    {{ end }}
+                </div>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+
+    <!-- Pagination -->
+    {{ if gt .Paginator.TotalPages 1 }}
+    <div class="pagination">
+        {{ if .Paginator.HasPrev }}
+        <a href="{{ .Paginator.Prev.URL }}" class="pagination-btn prev">← Previous</a>
+        {{ end }}
+
+        <span class="pagination-info">
+            Page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}
+        </span>
+
+        {{ if .Paginator.HasNext }}
+        <a href="{{ .Paginator.Next.URL }}" class="pagination-btn next">Next →</a>
+        {{ end }}
+    </div>
+    {{ end }}
+</div>
+
+<style>
+    .episodes-list-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .breadcrumb {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #9b59b6;
+    }
+
+    .breadcrumb a {
+        color: #9b59b6;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .breadcrumb a:hover {
+        color: #7d3c98;
+        text-decoration: underline;
+    }
+
+    .breadcrumb span {
+        margin: 0 0.5rem;
+        color: #666;
+    }
+
+    .breadcrumb .current {
+        color: #333;
+        font-weight: bold;
+    }
+
+    .episodes-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #eee;
+    }
+
+    .episodes-header h1 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 2.5rem;
+    }
+
+    .episodes-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid #e9ecef;
+    }
+
+    .stat-card h3 {
+        font-size: 2rem;
+        margin: 0;
+        color: #9b59b6;
+    }
+
+    .stat-card p {
+        margin: 0.5rem 0 0 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .episodes-filters {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .filter-section h3,
+    .sort-section h3 {
+        margin: 0 0 1rem 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: #9b59b6;
+        color: white;
+        border-color: #9b59b6;
+    }
+
+    .sort-select {
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .episodes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .episode-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+
+    .episode-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #ffc107;
+        color: #333;
+        padding: 0.3rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        z-index: 1;
+    }
+
+    .episode-image {
+        height: 200px;
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+
+    .episode-image a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+    }
+
+    .episode-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .episode-card:hover .episode-image img {
+        transform: scale(1.1);
+    }
+
+    .episode-image.placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #9b59b6 0%, #3498db 100%);
+        color: white;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .episode-content {
+        padding: 1.5rem;
+    }
+
+    .episode-number {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .season-badge,
+    .episode-badge {
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .season-badge {
+        background: #9b59b6;
+        color: white;
+    }
+
+    .episode-badge {
+        background: #3498db;
+        color: white;
+    }
+
+    .episode-content h2 {
+        margin: 0 0 1rem 0;
+        font-size: 1.3rem;
+    }
+
+    .episode-content h2 a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .episode-content h2 a:hover {
+        color: #9b59b6;
+    }
+
+    .episode-meta {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .episode-meta span {
+        margin-right: 1rem;
+    }
+
+    .authors a {
+        color: #9b59b6;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .authors a:hover {
+        text-decoration: underline;
+    }
+
+    .episode-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .episode-tags {
+        margin-bottom: 1rem;
+    }
+
+    .tag {
+        display: inline-block;
+        background: #e9ecef;
+        color: #495057;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        margin-right: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .episode-platforms {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .platform-badge {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-weight: bold;
+    }
+
+    .platform-badge.youtube {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .platform-badge.spotify {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .platform-badge.spreaker {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .platform-badge.apple {
+        background: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 3rem;
+        padding: 2rem 0;
+        border-top: 1px solid #eee;
+    }
+
+    .pagination-btn {
+        padding: 0.8rem 1.5rem;
+        background: #9b59b6;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .pagination-btn:hover {
+        background: #7d3c98;
+        transform: translateY(-2px);
+    }
+
+    .pagination-info {
+        color: #666;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .episodes-filters {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .episodes-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const sortSelect = document.getElementById('sortSelect');
+        const episodesGrid = document.getElementById('episodesGrid');
+        const episodes = Array.from(document.querySelectorAll('.episode-card'));
+
+        // Filter functionality
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const filter = this.getAttribute('data-filter');
+
+                episodes.forEach(episode => {
+                    if (filter === 'all') {
+                        episode.style.display = 'block';
+                    } else if (filter === 'featured') {
+                        episode.style.display = episode.getAttribute('data-featured') === 'true' ? 'block' : 'none';
+                    } else if (filter.startsWith('season-')) {
+                        const seasonNum = filter.split('-')[1];
+                        episode.style.display = episode.getAttribute('data-season') === seasonNum ? 'block' : 'none';
+                    }
+                });
+
+                applySorting();
+            });
+        });
+
+        // Sort functionality
+        sortSelect.addEventListener('change', function () {
+            applySorting();
+        });
+
+        function applySorting() {
+            const visibleEpisodes = episodes.filter(ep => ep.style.display !== 'none');
+            const sortBy = sortSelect.value;
+
+            visibleEpisodes.sort((a, b) => {
+                switch (sortBy) {
+                    case 'date-desc':
+                        return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+                    case 'date-asc':
+                        return new Date(a.getAttribute('data-date')) - new Date(b.getAttribute('data-date'));
+                    case 'season-episode-desc':
+                        const seasonDiff = parseInt(b.getAttribute('data-season')) - parseInt(a.getAttribute('data-season'));
+                        if (seasonDiff !== 0) return seasonDiff;
+                        return parseInt(b.getAttribute('data-episode')) - parseInt(a.getAttribute('data-episode'));
+                    case 'season-episode-asc':
+                        const seasonDiffAsc = parseInt(a.getAttribute('data-season')) - parseInt(b.getAttribute('data-season'));
+                        if (seasonDiffAsc !== 0) return seasonDiffAsc;
+                        return parseInt(a.getAttribute('data-episode')) - parseInt(b.getAttribute('data-episode'));
+                    case 'title-asc':
+                        return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+                    default:
+                        return 0;
+                }
+            });
+
+            visibleEpisodes.forEach(ep => {
+                episodesGrid.appendChild(ep);
+            });
+        }
+    });
+</script>
+{{ end }}
