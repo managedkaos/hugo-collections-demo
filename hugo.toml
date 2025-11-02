@@ -7,3 +7,6 @@ disableKinds = ["taxonomy", "term"]
 [pagination]
   pagerSize = 5
   path = "page"
+
+# Number of items per page (required for pagination)
+paginate = 10
