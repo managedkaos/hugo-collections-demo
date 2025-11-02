@@ -25,7 +25,12 @@
             <p>Published</p>
         </div>
         <div class="stat-card">
-            <h3>{{ $seasons := .Pages.GroupByParam "season" }}{{ len $seasons }}</h3>
+            {{ $allSeasons := slice }}
+            {{ range .Pages }}
+                {{ $allSeasons = $allSeasons | append .Params.season }}
+            {{ end }}
+            {{ $uniqueSeasons := $allSeasons | uniq }}
+            <h3>{{ len $uniqueSeasons }}</h3>
             <p>Seasons</p>
         </div>
     </div>
@@ -36,9 +41,17 @@
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">All Episodes</button>
                 <button class="filter-btn" data-filter="featured">Featured Only</button>
-                <button class="filter-btn" data-filter="season-3">Season 3</button>
-                <button class="filter-btn" data-filter="season-2">Season 2</button>
-                <button class="filter-btn" data-filter="season-1">Season 1</button>
+                {{ $allSeasons := slice }}
+                {{ range .Pages }}
+                    {{ $allSeasons = $allSeasons | append .Params.season }}
+                {{ end }}
+                {{ $uniqueSeasons := $allSeasons | uniq | sort }}
+                {{ $seasonsCount := len $uniqueSeasons }}
+                {{ range $i := seq $seasonsCount }}
+                    {{ $reverseIndex := sub $seasonsCount $i }}
+                    {{ $seasonNum := index $uniqueSeasons $reverseIndex }}
+                    <button class="filter-btn" data-filter="season-{{ $seasonNum }}">Season {{ $seasonNum }}</button>
+                {{ end }}
             </div>
         </div>
 
@@ -61,7 +74,7 @@
     </div>
 
     <div class="episodes-grid" id="episodesGrid">
-        {{ range .Pages }}
+        {{ range .Paginator.Pages }}
         <article class="episode-card" data-featured="{{ .Params.featured }}" data-season="{{ .Params.season }}"
             data-episode="{{ .Params.episode }}" data-date="{{ .Date.Format " 2006-01-02" }}"
             data-title="{{ .Title | lower }}" data-description="{{ .Params.description | lower }}"

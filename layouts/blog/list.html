@@ -23,8 +23,16 @@
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">All Posts</button>
                 <button class="filter-btn" data-filter="featured">Featured Only</button>
-                <button class="filter-btn" data-filter="tutorials">Tutorials</button>
-                <button class="filter-btn" data-filter="reviews">Reviews</button>
+                {{ $allCategories := slice }}
+                {{ range .Pages }}
+                    {{ range .Params.categories }}
+                        {{ $allCategories = $allCategories | append . }}
+                    {{ end }}
+                {{ end }}
+                {{ $uniqueCategories := $allCategories | uniq | sort }}
+                {{ range $uniqueCategories }}
+                    <button class="filter-btn" data-filter="{{ . }}">{{ . | title }}</button>
+                {{ end }}
             </div>
         </div>
 
@@ -46,7 +54,7 @@
     </div>
 
     <div class="blog-posts" id="blogPosts">
-        {{ range .Pages }}
+        {{ range .Paginator.Pages }}
         <article class="blog-post" data-featured="{{ .Params.featured }}"
             data-category="{{ .Params.categories | first 1 }}" data-date="{{ .Date.Format " 2006-01-02" }}"
             data-title="{{ .Title | lower }}" data-description="{{ .Params.description | lower }}"
