@@ -1,0 +1,523 @@
+{{ define "main" }}
+<div class="guests-list-container">
+    <nav class="breadcrumb">
+        <a href="/">🏠 Home</a>
+        <span>→</span>
+        <span class="current">🎤 Guests</span>
+    </nav>
+
+    <div class="guests-header">
+        <h1>{{ .Title | default "Our Podcast Guests" }}</h1>
+        <p>Meet the amazing guests who have appeared on our podcast episodes.</p>
+    </div>
+
+    <div class="guests-stats">
+        <div class="stat-card">
+            <h3>{{ len .Pages }}</h3>
+            <p>Total Guests</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.featured" true) }}</h3>
+            <p>Featured Guests</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.expertise_level" "Expert") }}</h3>
+            <p>Expert Level</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ len (where .Pages "Params.role" "Developer") }}</h3>
+            <p>Developers</p>
+        </div>
+    </div>
+
+    <div class="guests-filters">
+        <div class="filter-section">
+            <h3>Filter by Role:</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="featured">Featured</button>
+                <button class="filter-btn" data-filter="expert">Expert Level</button>
+                <button class="filter-btn" data-filter="developer">Developers</button>
+                <button class="filter-btn" data-filter="designer">Designers</button>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <h3>Search Guests:</h3>
+            <input type="text" id="guestSearch" placeholder="Search by name, role, or specialty..."
+                class="search-input">
+        </div>
+    </div>
+
+    <div class="guests-grid" id="guestsGrid">
+        {{ range .Pages }}
+        <div class="guest-card" data-featured="{{ .Params.featured }}" data-role="{{ .Params.role | lower }}"
+            data-expertise="{{ .Params.expertise_level | lower }}"
+            data-specialties="{{ delimit .Params.specialties " " | lower }}" data-name="{{ .Title | lower }}">
+
+            {{ if .Params.featured }}
+            <div class="featured-badge">⭐ Featured</div>
+            {{ end }}
+
+            <div class="guest-avatar">
+                <a href="{{ .Permalink }}" class="guest-avatar-link">
+                    {{ if .Params.avatar }}
+                    <img src="{{ .Params.avatar }}" alt="{{ .Title }}" />
+                    {{ else }}
+                    <div class="avatar-placeholder">
+                        <span>{{ .Title | truncate 2 }}</span>
+                    </div>
+                    {{ end }}
+                </a>
+            </div>
+
+            <div class="guest-info">
+                <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+                <p class="guest-role">{{ .Params.role }}</p>
+                <p class="guest-company">{{ .Params.company }}</p>
+                <p class="guest-location">{{ .Params.location }}</p>
+
+                <div class="guest-bio">
+                    <p>{{ .Params.bio | truncate 120 }}</p>
+                </div>
+
+                <div class="guest-specialties">
+                    {{ range first 3 .Params.specialties }}
+                    <span class="specialty-tag">{{ . }}</span>
+                    {{ end }}
+                    {{ if gt (len .Params.specialties) 3 }}
+                    <span class="specialty-more">+{{ sub (len .Params.specialties) 3 }} more</span>
+                    {{ end }}
+                </div>
+
+                <div class="guest-stats">
+                    <span class="experience">{{ .Params.years_experience }}+ years</span>
+                    <span class="level">{{ .Params.expertise_level }}</span>
+                </div>
+
+                <div class="guest-links">
+                    {{ if .Params.github }}
+                    <a href="https://github.com/{{ .Params.github }}" target="_blank"
+                        class="guest-link github">GitHub</a>
+                    {{ end }}
+                    {{ if .Params.twitter }}
+                    <a href="https://twitter.com/{{ .Params.twitter }}" target="_blank"
+                        class="guest-link twitter">Twitter</a>
+                    {{ end }}
+                    {{ if .Params.website }}
+                    <a href="{{ .Params.website }}" target="_blank" class="guest-link website">Website</a>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+
+    <style>
+        .guests-list-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #e67e22;
+        }
+
+        .breadcrumb a {
+            color: #e67e22;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .breadcrumb a:hover {
+            color: #d35400;
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5rem;
+            color: #666;
+        }
+
+        .breadcrumb .current {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .guests-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .guests-header h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        .guests-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin: 0;
+            color: #e67e22;
+        }
+
+        .stat-card p {
+            margin: 0.5rem 0 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .guests-filters {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .filter-section h3,
+        .search-section h3 {
+            margin: 0 0 1rem 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #e67e22;
+            color: white;
+            border-color: #e67e22;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #e67e22;
+            box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.25);
+        }
+
+        .guests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .guest-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .guest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #ffc107;
+            color: #333;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .guest-avatar {
+            height: 120px;
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .guest-avatar-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .guest-avatar-link:hover {
+            transform: scale(1.1);
+        }
+
+        .guest-avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .guest-avatar-link:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .guest-avatar-link:hover .avatar-placeholder {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .guest-info {
+            padding: 1.5rem;
+        }
+
+        .guest-info h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.3rem;
+        }
+
+        .guest-info h2 a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .guest-info h2 a:hover {
+            color: #e67e22;
+        }
+
+        .guest-role {
+            color: #e67e22;
+            font-weight: bold;
+            margin: 0 0 0.3rem 0;
+            font-size: 0.9rem;
+        }
+
+        .guest-company,
+        .guest-location {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0 0 0.3rem 0;
+        }
+
+        .guest-bio {
+            margin: 1rem 0;
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .guest-specialties {
+            margin: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .specialty-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .specialty-more {
+            color: #666;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        .guest-stats {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .experience {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .level {
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        .guest-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .guest-link {
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .guest-link.github {
+            background: #333;
+            color: white;
+        }
+
+        .guest-link.twitter {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .guest-link.website {
+            background: #e67e22;
+            color: white;
+        }
+
+        .guest-link:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .guests-filters {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .guests-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const searchInput = document.getElementById('guestSearch');
+            const guestCards = Array.from(document.querySelectorAll('.guest-card'));
+
+            let currentFilter = 'all';
+            let currentSearch = '';
+
+            // Filter functionality
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    applyFilters();
+                });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', function () {
+                currentSearch = this.value.toLowerCase();
+                applyFilters();
+            });
+
+            function applyFilters() {
+                guestCards.forEach(card => {
+                    const matchesFilter = matchesCurrentFilter(card);
+                    const matchesSearch = matchesCurrentSearch(card);
+
+                    if (matchesFilter && matchesSearch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            function matchesCurrentFilter(card) {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'featured') return card.getAttribute('data-featured') === 'true';
+                if (currentFilter === 'expert') return card.getAttribute('data-expertise') === 'expert';
+                if (currentFilter === 'developer') return card.getAttribute('data-role').includes('developer');
+                if (currentFilter === 'designer') return card.getAttribute('data-role').includes('designer');
+                return true;
+            }
+
+            function matchesCurrentSearch(card) {
+                if (!currentSearch) return true;
+
+                const name = card.getAttribute('data-name');
+                const role = card.getAttribute('data-role');
+                const specialties = card.getAttribute('data-specialties');
+
+                return name.includes(currentSearch) ||
+                    role.includes(currentSearch) ||
+                    specialties.includes(currentSearch);
+            }
+        });
+    </script>
+</div>
+{{ end }}

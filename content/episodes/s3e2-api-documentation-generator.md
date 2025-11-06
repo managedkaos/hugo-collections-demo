@@ -12,8 +12,9 @@ featured: true
 description: "Automated API documentation generator with interactive examples"
 image: "https://placehold.co/600x400/9b59b6/FFF?text=API Documentation\nGenerator"
 authors: ["mike-johnson", "sarah-wilson", "john-doe"]
-youtube: "ea4hGPsykTI"
-spotify: "spotify:episode:7rEp4dPqGwJNdGhLNZaTBz"
+guests: ["david-chen"]
+youtube: "https://www.youtube.com/watch?v=ea4hGPsykTI"
+spotify: "https://open.spotify.com/episode/3iMNDZiW8vwQDw3EZjrVJF"
 ---
 
 In this episode, we dive deep into building an automated API documentation generator using Python, FastAPI, and Swagger. Our team discusses the challenges and solutions we encountered while building this tool.

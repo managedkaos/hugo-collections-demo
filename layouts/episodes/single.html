@@ -37,6 +37,19 @@
                 </div>
             </div>
             {{ end }}
+            {{ if .Params.guests }}
+            <div class="meta-item">
+                <strong>Guests:</strong>
+                <div class="guests-list">
+                    {{ range $i, $guestSlug := .Params.guests }}
+                    {{ $guest := $.Site.GetPage (printf "/guests/%s" $guestSlug) }}
+                    {{ if $guest }}
+                    {{ if $i }}, {{ end }}<a href="{{ $guest.Permalink }}" class="guest-link">{{ $guest.Title }}</a>
+                    {{ end }}
+                    {{ end }}
+                </div>
+            </div>
+            {{ end }}
             {{ if .Params.status }}
             <div class="meta-item">
                 <strong>Status:</strong>
@@ -61,15 +74,13 @@
     </header>
 
     {{ if .Params.image }}
-    <div class="episode-image">
+    <!-- div class="episode-image">
         <img src="{{ .Params.image }}" alt="{{ .Title }}" />
-    </div>
+    </div -->
     {{ end }}
 
-    <!-- Media Players Section -->
-    <div class="episode-players">
-        <h2>Listen & Watch</h2>
-
+    <!-- Media Players Section class="episode-players" -->
+    <div>
         {{/* YouTube Player - for video content */}}
         {{ if .Params.youtube }}
         {{ partial "episode-youtube.html" (dict "code" .Params.youtube "title" (printf "%s - YouTube" .Title)) }}
@@ -95,19 +106,18 @@
         {{/* Additional platform links */}}
         {{ if or .Params.apple .Params.spotify .Params.spreaker }}
         <div class="platform-links">
-            <h3>Available on:</h3>
             <div class="links-grid">
                 {{ if .Params.youtube }}
-                <a href="https://www.youtube.com/watch?v={{ .Params.youtube }}" target="_blank"
+                <!-- a href="https://www.youtube.com/watch?v={{ .Params.youtube }}" target="_blank"
                     class="platform-link youtube">
                     📺 YouTube
-                </a>
+                </a -->
                 {{ end }}
                 {{ if .Params.spotify }}
-                <a href="https://open.spotify.com/episode/{{ .Params.spotify }}" target="_blank"
+                <!-- a href="https://open.spotify.com/episode/{{ .Params.spotify }}" target="_blank"
                     class="platform-link spotify">
                     🎵 Spotify
-                </a>
+                </a -->
                 {{ end }}
                 {{ if .Params.spreaker }}
                 <a href="https://www.spreaker.com/episode/{{ .Params.spreaker }}" target="_blank"
@@ -273,6 +283,41 @@
         padding: 1rem;
         border-radius: 8px;
         border: 1px solid #e9ecef;
+    }
+
+    .meta-item strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .authors-list,
+    .guests-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+
+    .author-link,
+    .guest-link {
+        color: #9b59b6;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .author-link:hover {
+        color: #7d3c98;
+        text-decoration: underline;
+    }
+
+    .guest-link {
+        color: #e67e22;
+    }
+
+    .guest-link:hover {
+        color: #d35400;
+        text-decoration: underline;
     }
 
     .status-badge {

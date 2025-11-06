@@ -61,6 +61,17 @@
         </div>
         <a href="/authors/" class="collection-link">View All Authors →</a>
       </div>
+
+      <div class="collection-card guests">
+        <h3>🎤 Guests</h3>
+        <p>Discover the amazing guests who have appeared on our podcast.</p>
+        <div class="collection-stats">
+          <span><strong>{{ len (where .Site.RegularPages "Section" "guests") }}</strong> guests</span>
+          <span><strong>{{ len (where (where .Site.RegularPages "Section" "guests") "Params.featured" true) }}</strong>
+            featured</span>
+        </div>
+        <a href="/guests/" class="collection-link">View All Guests →</a>
+      </div>
     </div>
   </div>
 
@@ -179,6 +190,10 @@
 
   .collection-card.authors {
     border-color: #6f42c1;
+  }
+
+  .collection-card.guests {
+    border-color: #e67e22;
   }
 
   .collection-card h3 {

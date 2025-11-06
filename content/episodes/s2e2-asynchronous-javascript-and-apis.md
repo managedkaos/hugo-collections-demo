@@ -12,6 +12,7 @@ featured: false
 description: "Master async programming in JavaScript including Promises, async/await, and working with APIs"
 image: "https://placehold.co/600x400/27ae60/FFF?text=Async JavaScript\n& APIs"
 authors: ["sarah-wilson", "mike-johnson"]
+guests: ["david-chen"]
 youtube: "https://www.youtube.com/embed/dQw4w9WgXcQ?si=bSCRrjeoPbm9vFdM"
 apple: "https://podcasts.apple.com/us/podcast/example/id123456789"
 ---

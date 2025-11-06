@@ -12,9 +12,9 @@ Parameters:
 
 {{ if $episodeCode }}
 <div class="audio-player spotify-player">
-    <div class="player-header">
+    <!-- div class="player-header">
         <h3>🎵 Listen on Spotify</h3>
-    </div>
+    </div -->
     <div class="audio-container">
         {{/* Extract episode ID from URI if full URI is provided */}}
         {{ $episodeId := $episodeCode }}
@@ -29,11 +29,11 @@ Parameters:
             allow="encrypted-media" class="spotify-iframe">
         </iframe>
     </div>
-    <div class="player-footer">
+    <!-- div class="player-footer">
         <a href="https://open.spotify.com/episode/{{ $episodeId }}" target="_blank" class="external-link">
             Listen on Spotify ↗
         </a>
-    </div>
+    </div -->
 </div>
 
 <style>

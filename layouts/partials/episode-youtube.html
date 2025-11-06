@@ -53,20 +53,20 @@ all query parameters (like ?si=...) are preserved automatically.
 {{ end }}
 
 <div class="video-player youtube-player">
-    <div class="player-header">
-        <h3>📺 Watch on YouTube</h3>
-    </div>
+    <!-- div class="player-header">
+        <h3></h3>
+    </div -->
     <div class="video-container">
         <iframe src="{{ $embedUrl }}" title="{{ $title }}"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin" allowfullscreen frameborder="0" class="youtube-iframe">
         </iframe>
     </div>
-    <div class="player-footer">
+    <!-- div class="player-footer">
         <a href="https://www.youtube.com/watch?v={{ $videoId }}" target="_blank" class="external-link">
             Watch on YouTube ↗
         </a>
-    </div>
+    </div -->
 </div>
 
 <style>
