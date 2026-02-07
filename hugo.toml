@@ -10,3 +10,657 @@ disableKinds = ["taxonomy", "term"]
 
 # Number of items per page (required for pagination)
 paginate = 10
+
+[module]
+  [[module.imports]]
+    path = "github.com/privatemaker/headless-cms"
+
+[outputs]
+  home = ["HTML", "RSS", "HeadlessCMSConfig"]
+
+[params.headless_cms]
+  engine = "sveltia"
+  site_url = "https://your-site.org"
+
+  [params.headless_cms.backend]
+    name = "github"
+    repo = "managedkaos/hugo-collections-demo"
+
+  # Blog collection
+  [[params.headless_cms.collections]]
+    name = "blog"
+    label = "Blog Posts"
+    folder = "content/blog"
+    create = true
+
+    [[params.headless_cms.collections.fields]]
+      label = "Title"
+      name = "title"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Date"
+      name = "date"
+      widget = "datetime"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Draft"
+      name = "draft"
+      widget = "boolean"
+      default = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Tags"
+      name = "tags"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Categories"
+      name = "categories"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Authors"
+      name = "authors"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Description"
+      name = "description"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Featured"
+      name = "featured"
+      widget = "boolean"
+      default = false
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Body"
+      name = "body"
+      widget = "markdown"
+
+  # Episodes collection
+  [[params.headless_cms.collections]]
+    name = "episodes"
+    label = "Episodes"
+    folder = "content/episodes"
+    create = true
+
+    [[params.headless_cms.collections.fields]]
+      label = "Title"
+      name = "title"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Season"
+      name = "season"
+      widget = "number"
+      value_type = "int"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Episode"
+      name = "episode"
+      widget = "number"
+      value_type = "int"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Date"
+      name = "date"
+      widget = "datetime"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Draft"
+      name = "draft"
+      widget = "boolean"
+      default = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Tags"
+      name = "tags"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Categories"
+      name = "categories"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Technologies"
+      name = "technologies"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Status"
+      name = "status"
+      widget = "select"
+      options = ["completed", "planned", "in-progress"]
+      default = "planned"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Featured"
+      name = "featured"
+      widget = "boolean"
+      default = false
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Description"
+      name = "description"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Image URL"
+      name = "image"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Authors"
+      name = "authors"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Guests"
+      name = "guests"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "YouTube URL"
+      name = "youtube"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Spotify URL"
+      name = "spotify"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Spreaker ID"
+      name = "spreaker"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Apple Podcasts URL"
+      name = "apple"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Body"
+      name = "body"
+      widget = "markdown"
+
+  # Authors collection
+  [[params.headless_cms.collections]]
+    name = "authors"
+    label = "Authors"
+    folder = "content/authors"
+    create = true
+
+    [[params.headless_cms.collections.fields]]
+      label = "Name"
+      name = "title"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Slug"
+      name = "slug"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Date"
+      name = "date"
+      widget = "datetime"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Draft"
+      name = "draft"
+      widget = "boolean"
+      default = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Bio"
+      name = "bio"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Role"
+      name = "role"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Company"
+      name = "company"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Location"
+      name = "location"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Website"
+      name = "website"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "GitHub Username"
+      name = "github"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Twitter Handle"
+      name = "twitter"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "LinkedIn Username"
+      name = "linkedin"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Email"
+      name = "email"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Avatar URL"
+      name = "avatar"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Specialties"
+      name = "specialties"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Expertise Level"
+      name = "expertise_level"
+      widget = "select"
+      options = ["Beginner", "Intermediate", "Expert"]
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Years of Experience"
+      name = "years_experience"
+      widget = "number"
+      value_type = "int"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Featured"
+      name = "featured"
+      widget = "boolean"
+      default = false
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Description"
+      name = "description"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Full Biography"
+      name = "body"
+      widget = "markdown"
+
+  # Projects collection
+  [[params.headless_cms.collections]]
+    name = "projects"
+    label = "Projects"
+    folder = "content/projects"
+    create = true
+
+    [[params.headless_cms.collections.fields]]
+      label = "Title"
+      name = "title"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Date"
+      name = "date"
+      widget = "datetime"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Draft"
+      name = "draft"
+      widget = "boolean"
+      default = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Project Type"
+      name = "project_type"
+      widget = "select"
+      options = ["web-development", "api", "mobile", "other"]
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Technologies"
+      name = "technologies"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Status"
+      name = "status"
+      widget = "select"
+      options = ["completed", "in-progress", "planned", "archived"]
+      default = "planned"
+
+    [[params.headless_cms.collections.fields]]
+      label = "GitHub URL"
+      name = "github_url"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Demo URL"
+      name = "demo_url"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Featured"
+      name = "featured"
+      widget = "boolean"
+      default = false
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Description"
+      name = "description"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Image URL"
+      name = "image"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Authors"
+      name = "authors"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Project Details"
+      name = "body"
+      widget = "markdown"
+
+  # Hosts collection
+  [[params.headless_cms.collections]]
+    name = "hosts"
+    label = "Hosts"
+    folder = "content/hosts"
+    create = true
+
+    [[params.headless_cms.collections.fields]]
+      label = "Name"
+      name = "title"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Slug"
+      name = "slug"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Date"
+      name = "date"
+      widget = "datetime"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Draft"
+      name = "draft"
+      widget = "boolean"
+      default = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Bio"
+      name = "bio"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Role"
+      name = "role"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Company"
+      name = "company"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Location"
+      name = "location"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Website"
+      name = "website"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "GitHub Username"
+      name = "github"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Twitter Handle"
+      name = "twitter"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "LinkedIn Username"
+      name = "linkedin"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Email"
+      name = "email"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Avatar URL"
+      name = "avatar"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Specialties"
+      name = "specialties"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Expertise Level"
+      name = "expertise_level"
+      widget = "select"
+      options = ["Beginner", "Intermediate", "Expert"]
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Years of Experience"
+      name = "years_experience"
+      widget = "number"
+      value_type = "int"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Featured"
+      name = "featured"
+      widget = "boolean"
+      default = false
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Description"
+      name = "description"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Full Biography"
+      name = "body"
+      widget = "markdown"
+
+  # Guests collection
+  [[params.headless_cms.collections]]
+    name = "guests"
+    label = "Guests"
+    folder = "content/guests"
+    create = true
+
+    [[params.headless_cms.collections.fields]]
+      label = "Name"
+      name = "title"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Slug"
+      name = "slug"
+      widget = "string"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Date"
+      name = "date"
+      widget = "datetime"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Draft"
+      name = "draft"
+      widget = "boolean"
+      default = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Bio"
+      name = "bio"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Role"
+      name = "role"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Company"
+      name = "company"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Location"
+      name = "location"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Website"
+      name = "website"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "GitHub Username"
+      name = "github"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Twitter Handle"
+      name = "twitter"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "LinkedIn Username"
+      name = "linkedin"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Email"
+      name = "email"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Avatar URL"
+      name = "avatar"
+      widget = "string"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Specialties"
+      name = "specialties"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Expertise Level"
+      name = "expertise_level"
+      widget = "select"
+      options = ["Beginner", "Intermediate", "Expert"]
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Years of Experience"
+      name = "years_experience"
+      widget = "number"
+      value_type = "int"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Featured"
+      name = "featured"
+      widget = "boolean"
+      default = false
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Description"
+      name = "description"
+      widget = "text"
+
+    [[params.headless_cms.collections.fields]]
+      label = "Episodes"
+      name = "episodes"
+      widget = "list"
+      required = false
+
+    [[params.headless_cms.collections.fields]]
+      label = "Full Biography"
+      name = "body"
+      widget = "markdown"

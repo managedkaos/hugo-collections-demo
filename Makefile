@@ -50,7 +50,8 @@ build: clean ## Build the static site
 
 serve: ## Start Hugo development server
 	@echo "$(GREEN)Starting Hugo development server...$(NC)"
-	@echo "$(YELLOW)Site will be available at: $(SITE_URL)$(NC)"
+	@echo "$(YELLOW) Site: $(SITE_URL)$(NC)"
+	@echo "$(YELLOW)Admin: $(SITE_URL)/admin$(NC)"
 	@echo "$(YELLOW)Press Ctrl+C to stop the server$(NC)"
 	@hugo server -D --bind 0.0.0.0 --port 1313
 
